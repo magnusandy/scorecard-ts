@@ -1,6 +1,6 @@
-import { ServiceRepository } from "../domain/serviceRepository";
+import { ServiceRepository } from "../domain/service/serviceRepository";
 import { Firestore, CollectionReference, DocumentReference, DocumentSnapshot, DocumentData } from "@google-cloud/firestore";
-import { Service } from "../domain/service";
+import { Service } from "../domain/service/service";
 import { Optional } from "java8script";
 import { UnknownException } from "../domain/exceptions";
 

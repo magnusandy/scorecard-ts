@@ -1,15 +1,19 @@
-import { CreateService, ServiceList, ServiceDTO } from "./dtos";
-import { ServiceService } from "../domain/serviceService";
-import { Service } from "../domain/service";
+import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion } from "./dtos";
+import { ServiceService } from "../domain/service/serviceService";
+import { Service } from "../domain/service/service";
 import uuid = require("uuid");
 import { NotFoundException } from "../domain/exceptions";
 import { Optional } from "java8script";
+import { QuestionService } from "../domain/questions/questionService";
+import { Question, Revision } from "../domain/questions/question";
 
 export class Api {
 
     private serviceService: ServiceService;
+    private questionService: QuestionService;
 
-    public constructor(serviceService: ServiceService) {
+    public constructor(serviceService: ServiceService,
+        questionService: QuestionService) {
         this.serviceService = serviceService;
     }
 
@@ -36,5 +40,22 @@ export class Api {
             owner: service.owner,
             vertical: service.vertical
         };
+    }
+
+    public async createQuestion(createQuestion: CreateQuestion, now: Date) {
+        const question: Question = new Question(
+            uuid.v4(),
+            [
+                new Revision(1, now, createQuestion.text, createQuestion.scores)
+            ]
+        );
+        return this.questionService.saveQuestion(question);
+    }
+
+    public async reviseQuestion(reviseQuestion: ReviseQuestion, now: Date) {
+        this.questionService.updateQuestion({
+            newRevisionNumber: reviseQuestion.revisionNumber,
+            ...reviseQuestion
+        }, now);
     }
 }

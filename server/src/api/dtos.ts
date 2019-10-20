@@ -14,3 +14,16 @@ export interface ServiceDTO {
 export interface ServiceList {
     services: ServiceDTO[];
 }
+
+export interface CreateQuestion {
+    text: string;
+    scores: number[];
+}
+
+export interface ReviseQuestion {
+    questionId: string;
+    revisionNumber: number;
+    text: string;
+    scores: number[];
+}
+
