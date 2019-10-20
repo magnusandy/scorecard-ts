@@ -80,6 +80,8 @@ function promiseErrorMiddleware<T>(reqFunction: RequestFunctionPromise<T>): Requ
             const body:T = await reqFunction(req, res);
             res.send(JSON.stringify(body));
         } catch (error) {
+            console.log(`HANDLING ERROR:`);
+            console.log(error);
             const exception: Exception = error;
             if (exception.type && exception.message) {
                 if (exception.type === ExceptionType.NotFound) {
