@@ -23,7 +23,7 @@ const serviceRepository: ServiceRepository = {
 
 const questionRepository: QuestionRepository = {
     saveQuestion: (question: Question) => Promise.resolve(question),
-    findQuestionById:(questionId: string) => Promise.resolve(Optional.empty()),
+    findQuestionById: (questionId: string) => Promise.resolve(Optional.empty()),
     findQuestions: () => Promise.resolve([])
 }
 const firestoreDatabase = new FirestoreProvider().getFirestore();

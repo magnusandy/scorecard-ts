@@ -56,6 +56,8 @@ function errorMiddleware(reqFunction: RequestFunction): RequestFunction {
         try {
             reqFunction(req, res);
         } catch (error) {
+            console.log(`HANDLING ERROR:`);
+            console.log(error);
             const exception: Exception = error;
             if (exception.type && exception.message) {
                 if (exception.type === ExceptionType.NotFound) {
