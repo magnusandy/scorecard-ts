@@ -30,8 +30,19 @@ export class FirestoreServiceRepository implements ServiceRepository {
         const serviceRef: DocumentReference = this.serviceCollection.doc(id);
         return serviceRef.get()
             .then(doc => this.deserializeService(doc))
+            .catch()
+    }
+
+    public findServices(): Promise<Service[]> {
+        return this.serviceCollection.get()
+            .then((snapshot) =>
+                snapshot.docs
+                    .map(this.deserializeService)
+                    .filter(optService => optService.isPresent())
+                    .map(optService => optService.get())
+            )
             .catch(err => {
-                throw new UnknownException(JSON.stringify(err));
+                throw new UnknownException(`error findServices: \n ${JSON.stringify(err)}`);
             })
     }
 

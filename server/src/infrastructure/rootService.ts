@@ -2,6 +2,7 @@ import { Application, Response, Request } from "express";
 import { Api } from "../api/api";
 import { Exception, ExceptionType, UnknownException } from "../domain/exceptions";
 import { CreateService } from "../api/dtos";
+import cors from "cors";
 
 type RequestFunction = (req: Request, res: Response) => void;
 type RequestFunctionPromise<T> = (req: Request, res: Response) => Promise<T>;
@@ -18,7 +19,7 @@ export class RootService {
     }
 
     public configure() {
-
+        this.expressServer.use(cors({origin:true}))
 
         this.get("/", (_req, res: Response) => {
             res.send("Hello World");
@@ -27,6 +28,11 @@ export class RootService {
         this.getAsync("/service/:serviceId", (req, res) => {
             return this.api.findServiceById(req.params.serviceId);
         });
+
+        this.getAsync("/service", (req, res) => {
+            console.log("GET services")
+            return this.api.findServices();
+        })
 
         this.postAsync("/service", (req, res) => {
             const body: CreateService = req.body;

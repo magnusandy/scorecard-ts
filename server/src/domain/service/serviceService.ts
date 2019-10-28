@@ -16,4 +16,8 @@ export class ServiceService {
     public async findServiceById(id: string): Promise<Optional<Service>> {
         return this.serviceRepository.findService(id);
     }
+
+    public findServices(): Promise<Service[]> {
+        return this.serviceRepository.findServices();
+    }
 }

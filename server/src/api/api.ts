@@ -23,23 +23,21 @@ export class Api {
             createService.name,
             createService.owner,
             createService.vertical
-        )).then(r => ({
-            id: r.id,
-            name: r.name,
-            owner: r.owner,
-            vertical: r.vertical
-        }));
+        )).then(r => (this.serviceToDto(r)));
     }
 
     public async findServiceById(serviceId: string): Promise<ServiceDTO> {
         const serviceOptional: Optional<Service> = await this.serviceService.findServiceById(serviceId);
         const service: Service = serviceOptional.orElseThrow(() => new NotFoundException(`service with id: ${serviceId} not found`));
+        return this.serviceToDto(service);
+    }
+
+    public async findServices(): Promise<ServiceList> {
+        const services = await this.serviceService.findServices();
         return {
-            id: service.id,
-            name: service.name,
-            owner: service.owner,
-            vertical: service.vertical
-        };
+            services: services.map(s => this.serviceToDto(s))
+        }
+
     }
 
     public async createQuestion(createQuestion: CreateQuestion, now: Date) {
@@ -57,5 +55,14 @@ export class Api {
             newRevisionNumber: reviseQuestion.revisionNumber,
             ...reviseQuestion
         }, now);
+    }
+
+    private serviceToDto(service: Service): ServiceDTO {
+        return {
+            id: service.id,
+            name: service.name,
+            owner: service.owner,
+            vertical: service.vertical
+        };
     }
 }

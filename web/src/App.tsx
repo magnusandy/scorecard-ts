@@ -1,33 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Menu } from "semantic-ui-react";
 import { Link, BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ServicesApp from './services';
 import QuestionsApp from './questions';
+import styled from 'styled-components';
+import MainBar, { MenuNames } from './root/mainBar';
+import { Optional } from "java8script";
+
+const PaddedDiv = styled.div`
+  margin: 16px;
+`;
+
 
 const App: React.FC = () => {
+  const [search, setSearch] = useState<Optional<string>>(Optional.empty());
+
+  const mapSearchValueToState = (val: string | null): Optional<string> => {
+    if (val === null || val === "") {
+      return Optional.empty();
+    } else {
+      return Optional.of(val);
+    }
+  }
   return (
     <Router>
-        <Menu>
-          <Menu.Item
-            name='services'
-            active={false}
-            content={<Link to="/services">Services</Link>}
-            onClick={() => { }}
-          />
-          <Menu.Item
-            name='questions'
-            active={false}
-            content={<Link to="/questions">Questions</Link>}
-            onClick={() => { }}
-          />
-        </Menu>
-
+      <MainBar
+        searchChanged={(val) => setSearch(mapSearchValueToState(val))}
+      />
       <Switch>
         <Route path="/services">
-          <ServicesApp/>
+          <PaddedDiv>
+            <ServicesApp
+            searchFilter={search} />
+          </PaddedDiv>
         </Route>
         <Route path="/questions">
-          <QuestionsApp/>
+          <PaddedDiv>
+            <QuestionsApp />
+          </PaddedDiv>
         </Route>
       </Switch>
     </Router>

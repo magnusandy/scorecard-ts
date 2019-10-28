@@ -16,10 +16,6 @@ import { QuestionService } from "./domain/questions/questionService";
 const expressApp = express();
 expressApp.use(bodyParser.urlencoded({ extended: false }));
 expressApp.use(bodyParser.json());
-const serviceRepository: ServiceRepository = {
-    saveService: (s) => Promise.resolve(s),
-    findService: (serviceId) => { return Promise.resolve(Optional.empty()) }
-}
 
 const questionRepository: QuestionRepository = {
     saveQuestion: (question: Question) => Promise.resolve(question),
