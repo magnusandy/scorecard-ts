@@ -39,7 +39,7 @@ export class RootService {
             return this.api.saveNewService(body);
         });
 
-        this.expressServer.listen(4000, () => console.log(`listening on port 4000`));
+        this.expressServer.listen(80, () => console.log(`listening on port 80`));
     }
 
     private get(path: string, requestFunction: RequestFunction) {
