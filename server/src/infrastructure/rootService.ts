@@ -36,6 +36,7 @@ export class RootService {
 
         this.postAsync("/service", (req, res) => {
             const body: CreateService = req.body;
+            console.log(body);
             return this.api.saveNewService(body);
         });
 

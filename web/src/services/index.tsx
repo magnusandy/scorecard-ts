@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Header, Rating, Button } from "semantic-ui-react";
 import { getAllServices, Service } from "../api";
 import { Optional } from "java8script";
+import CreateServiceModalButton from "./createModal";
 
 export interface Props {
     searchFilter: Optional<string>;
@@ -40,6 +41,10 @@ const ServicesApp: React.FC<Props> = (props) => {
         .catch(e => setError("Problem Fetching Service List"));
     }, []);
 
+    const handleNewService = (service: Service) => {
+        setServices([...services, service]);
+    } 
+
     console.log(services);
     const filteredServices = services.filter((service) =>
         props.searchFilter.map(filter => serviceMatchesFilter(filter, service)).orElse(true));
@@ -47,6 +52,7 @@ const ServicesApp: React.FC<Props> = (props) => {
     return (
         <>
             <h1>Services</h1>
+            <CreateServiceModalButton handleNewService={handleNewService}/>
             <Table celled padded>
                 <Table.Header>
                     <Table.Row>
