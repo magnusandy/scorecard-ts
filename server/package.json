@@ -24,6 +24,6 @@
   "scripts": {
     "build": "tsc",
     "startDB": "docker run -p 8000:8000 amazon/dynamodb-local",
-    "start": "yarn install && yarn build && node build/index.js"
+    "start": "npm install && npm build && node build/index.js"
   }
 }
