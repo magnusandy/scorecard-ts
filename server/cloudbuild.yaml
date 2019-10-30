@@ -12,4 +12,4 @@ steps:
   - '--filename=gkldeployment.yaml'
   - '--image=gcr.io/radiant-night-256502/github.com/magnusandy/scorecard-ts:$SHORT_SHA'
   - '--location=us-central1-a'
-  - '--cluster=scorcard-cluster'
+  - '--cluster=scorecard-cluster'
