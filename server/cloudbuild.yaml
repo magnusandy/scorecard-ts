@@ -1,9 +1,12 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  dir: 'server/'
   args: ["build", "-t", "gcr.io/scorecard/server:$SHORT_SHA", "."]
 - name: 'gcr.io/cloud-builders/docker'
+  dir: 'server/'
   args: ["push", "gcr.io/scorecard/server:$SHORT_SHA"]
 - name: 'gcr.io/cloud-builders/gke-deploy'
+  dir: 'server/'
   args:
   - 'run'
   - '--filename=gkldeployment.yaml'
