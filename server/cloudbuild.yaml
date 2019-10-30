@@ -1,15 +1,4 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  dir: 'server/'
-  args: ["build", "-t", "gcr.io/radiant-night-256502/github.com/magnusandy/scorecard-ts:$SHORT_SHA", "."]
-- name: 'gcr.io/cloud-builders/docker'
-  dir: 'server/'
-  args: ["push", "gcr.io/radiant-night-256502/github.com/magnusandy/scorecard-ts:$SHORT_SHA"]
-- name: 'gcr.io/cloud-builders/gke-deploy'
-  dir: 'server/'
-  args:
-  - 'run'
-  - '--filename=gkldeployment.yaml'
-  - '--image=gcr.io/radiant-night-256502/github.com/magnusandy/scorecard-ts:$SHORT_SHA'
-  - '--location=us-central1-a'
-  - '--cluster=scorecard-cluster'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['app', 'deploy']
+  timeout: '1600s'
