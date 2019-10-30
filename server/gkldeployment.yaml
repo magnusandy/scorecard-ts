@@ -15,6 +15,7 @@ spec:
     spec:
       containers:
       - name: scorecard
+        image: gcr.io/radiant-night-256502/github.com/magnusandy/scorecard-ts
         ports:
         - containerPort: 4000
 ---
