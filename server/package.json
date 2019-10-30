@@ -23,7 +23,8 @@
   },
   "scripts": {
     "build": "tsc",
+    "gcp-build": "tsc",
     "startDB": "docker run -p 8000:8000 amazon/dynamodb-local",
-    "start": "npm install && npm build && node build/index.js"
+    "start": "node build/index.js"
   }
 }
