@@ -1,0 +1,12 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["build", "-t", "gcr.io/scorecard/server:$SHORT_SHA", "."]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/scorecard/server:$SHORT_SHA"]
+- name: 'gcr.io/cloud-builders/gke-deploy'
+  args:
+  - 'run'
+  - '--filename=gkldeployment.yaml'
+  - '--image=gcr.io/scorecard/server:$SHORT_SHA'
+  - '--location=us-central1-a'
+  - '--cluster=scorcard-cluster'
