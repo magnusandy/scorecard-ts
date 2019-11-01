@@ -4,9 +4,10 @@ RUN mkdir -p /server/prod/app
 WORKDIR /server/prod/app
 
 ADD package.json ./
-RUN yarn install
+RUN npm install
+RUN npm build
 COPY . .
 
-EXPOSE 4000
+EXPOSE 8080
 
-CMD ["yarn", "start"]
+CMD ["npm", "start"]

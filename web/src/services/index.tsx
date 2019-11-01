@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Header, Rating, Button, Message } from "semantic-ui-react";
-import { getAllServices, Service, deleteService, updateService } from "../api";
+import { Table, Header, Button, Message } from "semantic-ui-react";
+import { getAllServices, Service, deleteService } from "../api";
 import { Optional } from "java8script";
 import EditServiceModalButton from "./editModal";
 import CreateServiceModalButton from "./createModal";
