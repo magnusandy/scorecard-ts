@@ -9,24 +9,6 @@ export interface Props {
     searchFilter: Optional<string>;
 }
 
-const renderRow = (service: Service) => {
-    return (
-        <Table.Row>
-            <Table.Cell>
-                <Header as='h2' textAlign='center'>
-                    {service.name}
-                </Header>
-            </Table.Cell>
-            <Table.Cell singleLine>{service.owner}</Table.Cell>
-            <Table.Cell singleLine>{service.vertical}</Table.Cell>
-            <Table.Cell >
-                <Button color="orange">Edit</Button>
-                <Button color="red">Delete</Button>
-            </Table.Cell>
-        </Table.Row>
-    );
-}
-
 const serviceMatchesFilter = (filter: string, service: Service): boolean => {
     return service.name.startsWith(filter) || service.owner.startsWith(filter) || service.vertical.startsWith(filter);
 }
