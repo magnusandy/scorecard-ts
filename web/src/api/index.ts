@@ -11,6 +11,12 @@ export interface CreateService {
     vertical: string;
 }
 
+export interface UpdateService {
+    id: string;
+    owner: string;
+    vertical: string;
+}
+
 interface ServiceList {
     services: Service[];
 }
@@ -32,7 +38,6 @@ export async function getAllServices(): Promise<Service[]> {
 }
 
 export async function createNewService(create: CreateService): Promise<Service> {
-    console.log(create);
     const response = await fetch("http://localhost:8080/service", {
         method: "POST",
         mode: "cors",
@@ -42,9 +47,38 @@ export async function createNewService(create: CreateService): Promise<Service> 
         body: JSON.stringify(create)
     });
     const json = await response.json();
-    if(response.status !== 200) {
+    if (response.status !== 200) {
         throw "Something went wrong";
     }
     console.log(json);
     return json as Service;
+}
+
+export async function updateService(update: UpdateService): Promise<Service> {
+    const response = await fetch(`http://localhost:8080/service/${update.id}`, {
+        method: "PUT",
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(update)
+    });
+    const json = await response.json();
+    if (response.status !== 200) {
+        throw "Something went wrong";
+    }
+    console.log(json);
+    return json as Service;
+}
+
+export async function deleteService(serviceId: string): Promise<boolean> {
+    const response = await fetch(`http://localhost:8080/service/${serviceId}`, {
+        method: "DELETE",
+        mode: "cors",
+    });
+    if (response.status !== 200) {
+        throw `Delete of service with id: ${serviceId} failed`;
+    } else {
+        return true;
+    }
 }

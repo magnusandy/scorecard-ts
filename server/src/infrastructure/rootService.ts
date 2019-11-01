@@ -30,7 +30,7 @@ export class RootService {
         })
 
         this.postAsync("/service", (req, res) => {
-    
+
             const unvalidatedBody: CreateService = req.body;
             const validatedBody: CreateService = {
                 name: validateString("name", unvalidatedBody.name),

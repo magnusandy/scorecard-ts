@@ -1,19 +1,19 @@
 import React, { useState, ChangeEvent } from 'react'
 import { Button, Header, Modal, Input, Grid, GridColumn, Form } from 'semantic-ui-react'
-import { createNewService, Service } from '../api';
+import { createNewService, Service, updateService } from '../api';
 import styled from 'styled-components';
 
 interface Props {
-    handleNewService: (service: Service) => void;
+    handleUpdateService: (service: Service) => void;
+    service:Service;
 }
 
-const CreateServiceModalButton: React.FC<Props> = (props) => {
+const EditServiceModalButton: React.FC<Props> = (props) => {
     const [open, setOpen] = useState<boolean>(false);
-    const [name, setName] = useState<string>();
-    const [owner, setOwner] = useState<string>();
-    const [vertical, setVertical] = useState<string>();
+    const [owner, setOwner] = useState<string>(props.service.owner);
+    const [vertical, setVertical] = useState<string>(props.service.vertical);
 
-    const handleChange = (setFunction: React.Dispatch<React.SetStateAction<string | undefined>>) => {
+    const handleChange = (setFunction: React.Dispatch<React.SetStateAction<string>>) => {
         return (event: ChangeEvent<HTMLInputElement>) => setFunction(event.target.value)
     }
 
@@ -22,10 +22,11 @@ const CreateServiceModalButton: React.FC<Props> = (props) => {
     }
 
     const handleSubmit = () => {
-        if (isValid(name) && isValid(vertical) && isValid(owner)) {
-            createNewService({ name, owner, vertical })
+        if (isValid(vertical) && isValid(owner)) {
+            const id = props.service.id;
+            updateService({ id, owner, vertical })
                 .then(service => {
-                    props.handleNewService(service);
+                    props.handleUpdateService(service);
                     setOpen(false);
                 })
                 .catch(err => console.log(err))
@@ -35,33 +36,36 @@ const CreateServiceModalButton: React.FC<Props> = (props) => {
     return (
         <Modal
             open={open}
-            trigger={<Button onClick={() => setOpen(true)} color="green">Create Service</Button>}>
-            <Modal.Header>Create New Service</Modal.Header>
+            trigger={<Button onClick={() => setOpen(true)} color="orange">Edit</Button>}>
+            <Modal.Header>Edit Service</Modal.Header>
             <Modal.Content>
                 <Form>
                     <Form.Input
                         fluid
+                        disabled
                         label="Name"
-                        onChange={handleChange(setName)}
-                    />
+                        value={props.service.name}
+                        />
                     <Form.Input
                         fluid
                         label="Owner"
                         onChange={handleChange(setOwner)}
+                        value={owner}
                     />
                     <Form.Input
                         fluid
                         label="Vertical"
                         onChange={handleChange(setVertical)}
+                        value={vertical}
                     />
                 </Form>
             </Modal.Content>
             <Modal.Actions>
-                <Button color="green" onClick={handleSubmit}>Create</Button>
+                <Button color="green" onClick={handleSubmit}>Update</Button>
                 <Button color="red" onClick={() => setOpen(false)}>Close</Button>
             </Modal.Actions>
         </Modal>
     )
 }
 
-export default CreateServiceModalButton;
+export default EditServiceModalButton;
