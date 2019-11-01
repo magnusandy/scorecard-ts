@@ -1,7 +1,6 @@
 import React, { useState, ChangeEvent } from 'react'
-import { Button, Header, Modal, Input, Grid, GridColumn, Form } from 'semantic-ui-react'
-import { createNewService, Service, updateService } from '../api';
-import styled from 'styled-components';
+import { Button, Modal, Form } from 'semantic-ui-react'
+import { Service, updateService } from '../api';
 
 interface Props {
     handleUpdateService: (service: Service) => void;
