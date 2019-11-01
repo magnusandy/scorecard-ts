@@ -1,7 +1,7 @@
 import { Application, Response, Request } from "express";
 import { Api } from "../api/api";
-import { Exception, ExceptionType, UnknownException } from "../domain/exceptions";
-import { CreateService } from "../api/dtos";
+import { Exception, ExceptionType, UnknownException, ValidationException } from "../domain/exceptions";
+import { CreateService, ServiceUpdateDTO } from "../api/dtos";
 import cors from "cors";
 
 type RequestFunction = (req: Request, res: Response) => void;
@@ -19,32 +19,44 @@ export class RootService {
     }
 
     public configure() {
-        this.expressServer.use(cors({origin:true}))
-
-        this.get("/", (_req, res: Response) => {
-            res.send("Hello World");
-        });
+        this.expressServer.use(cors({ origin: true }))
 
         this.getAsync("/service/:serviceId", (req, res) => {
             return this.api.findServiceById(req.params.serviceId);
         });
 
         this.getAsync("/service", (req, res) => {
-            console.log("GET services")
             return this.api.findServices();
         })
 
         this.postAsync("/service", (req, res) => {
-            const body: CreateService = req.body;
-            console.log(body);
-            return this.api.saveNewService(body);
+    
+            const unvalidatedBody: CreateService = req.body;
+            const validatedBody: CreateService = {
+                name: validateString("name", unvalidatedBody.name),
+                owner: validateString("owner", unvalidatedBody.owner),
+                vertical: validateString("vertical", unvalidatedBody.vertical),
+            }
+            console.log(validatedBody);
+            return this.api.saveNewService(validatedBody);
+        });
+
+        this.putAsync("/service/:serviceId", (req, res) => {
+            const serviceId: string = req.params.serviceId;
+            const unvalidatedBody: ServiceUpdateDTO = req.body;
+            const validatedBody: ServiceUpdateDTO = {
+                owner: validateString("owner", unvalidatedBody.owner),
+                vertical: validateString("vertical", unvalidatedBody.vertical),
+            }
+            return this.api.updateService(serviceId, validatedBody);
+        });
+
+        this.deleteAsync("/service/:serviceId", (req, res) => {
+            const serviceId: string = req.params.serviceId;
+            return this.api.deleteService(serviceId);
         });
 
         this.expressServer.listen(8080, () => console.log(`listening on port 8080`));
-    }
-
-    private get(path: string, requestFunction: RequestFunction) {
-        this.expressServer.get(path, errorMiddleware(requestFunction));
     }
 
     private getAsync<T>(path: string, requestFunction: RequestFunctionPromise<T>) {
@@ -54,9 +66,23 @@ export class RootService {
     private postAsync<T>(path: string, requestFunction: RequestFunctionPromise<T>) {
         this.expressServer.post(path, promiseErrorMiddleware(requestFunction));
     }
+
+    private putAsync<T>(path: string, requestFunction: RequestFunctionPromise<T>) {
+        this.expressServer.put(path, promiseErrorMiddleware(requestFunction));
+    }
+
+    private deleteAsync<T>(path: string, requestFunction: RequestFunctionPromise<T>) {
+        this.expressServer.delete(path, promiseErrorMiddleware(requestFunction));
+    }
 }
 
-
+function validateString(name: string, val: string): string {
+    if (val) {
+        return val;
+    } else {
+        throw new ValidationException(name, val);
+    }
+}
 
 function errorMiddleware(reqFunction: RequestFunction): RequestFunction {
     return (req, res) => {
@@ -84,7 +110,7 @@ function errorMiddleware(reqFunction: RequestFunction): RequestFunction {
 function promiseErrorMiddleware<T>(reqFunction: RequestFunctionPromise<T>): RequestFunction {
     return async (req, res) => {
         try {
-            const body:T = await reqFunction(req, res);
+            const body: T = await reqFunction(req, res);
             res.send(JSON.stringify(body));
         } catch (error) {
             console.log(`HANDLING ERROR:`);

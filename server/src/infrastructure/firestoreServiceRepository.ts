@@ -26,11 +26,22 @@ export class FirestoreServiceRepository implements ServiceRepository {
         return service;
     }
 
+    public deleteService(serviceId: string): Promise<boolean> {
+        const serviceRef: DocumentReference = this.serviceCollection.doc(serviceId);
+        return serviceRef.delete()
+            .then(_result => true)
+            .catch(err => {
+                throw new UnknownException(`error deleteService: \n ${JSON.stringify(err)}`);
+            });
+    }
+
     public findService(id: string): Promise<Optional<Service>> {
         const serviceRef: DocumentReference = this.serviceCollection.doc(id);
         return serviceRef.get()
             .then(doc => this.deserializeService(doc))
-            .catch()
+            .catch(err => {
+                throw new UnknownException(`error findService: \n ${JSON.stringify(err)}`);
+            });
     }
 
     public findServices(): Promise<Service[]> {

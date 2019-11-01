@@ -1,45 +1,64 @@
 import React, { useState, ChangeEvent } from 'react'
-import { Button, Header, Modal, Input } from 'semantic-ui-react'
+import { Button, Header, Modal, Input, Grid, GridColumn, Form } from 'semantic-ui-react'
 import { createNewService, Service } from '../api';
+import styled from 'styled-components';
 
 interface Props {
     handleNewService: (service: Service) => void;
 }
 
-const CreateServiceModalButton:React.FC<Props> = (props) => {
+const CenteredDiv = styled.div`
+    text-align:center;
+`;
+
+const CreateServiceModalButton: React.FC<Props> = (props) => {
     const [open, setOpen] = useState<boolean>(false);
     const [name, setName] = useState<string>();
     const [owner, setOwner] = useState<string>();
     const [vertical, setVertical] = useState<string>();
 
-    const handleChange = (setFunction:React.Dispatch<React.SetStateAction<string | undefined>>) => {
-        return (event:ChangeEvent<HTMLInputElement>) => setFunction(event.target.value)
+    const handleChange = (setFunction: React.Dispatch<React.SetStateAction<string | undefined>>) => {
+        return (event: ChangeEvent<HTMLInputElement>) => setFunction(event.target.value)
     }
 
-    const isValid = (str:string|undefined):str is string => {
+    const isValid = (str: string | undefined): str is string => {
         return str !== undefined && str !== "";
     }
-    
+
     const handleSubmit = () => {
-        if(isValid(name) && isValid(vertical) && isValid(owner)) {
-            createNewService({name, owner, vertical})
-            .then(service => {
-                props.handleNewService(service);
-                setOpen(false);
-            })
-            .catch(err => console.log(err))
+        if (isValid(name) && isValid(vertical) && isValid(owner)) {
+            createNewService({ name, owner, vertical })
+                .then(service => {
+                    props.handleNewService(service);
+                    setOpen(false);
+                })
+                .catch(err => console.log(err))
         }
     }
 
     return (
-        <Modal 
-        open={open}
-        trigger={<Button onClick={() => setOpen(true)} color="green">Create Service</Button>}>
+        <Modal
+            open={open}
+            trigger={<Button onClick={() => setOpen(true)} color="green">Create Service</Button>}>
             <Modal.Header>Create New Service</Modal.Header>
             <Modal.Content>
-            <Input placeholder="Name..." onChange={handleChange(setName)} />
-            <Input placeholder="Owner..."onChange={handleChange(setOwner)}/>
-            <Input placeholder="Vertical..."onChange={handleChange(setVertical)}/>
+                <Form>
+                    <Form.Input
+                        fluid
+                        label="Name"
+                        onChange={handleChange(setName)}
+                    />
+                    <Form.Input
+                        fluid
+                        label="Owner"
+                        onChange={handleChange(setOwner)}
+                    />
+                    <Form.Input
+                        fluid
+                        label="Vertical"
+                        onChange={handleChange(setVertical)}
+                    />
+                </Form>
             </Modal.Content>
             <Modal.Actions>
                 <Button color="green" onClick={handleSubmit}>Create</Button>

@@ -1,6 +1,8 @@
 import { ServiceRepository } from "./serviceRepository";
 import { Service } from "./service";
 import { Optional } from "java8script";
+import ServiceUpdate from "./serviceUpdate";
+import { NotFoundException } from "../exceptions";
 
 export class ServiceService {
     private serviceRepository: ServiceRepository;
@@ -9,8 +11,19 @@ export class ServiceService {
         this.serviceRepository = serviceRepository;
     }
 
-    public async saveService(service: Service): Promise<Service> {
+    public saveService(service: Service): Promise<Service> {
         return this.serviceRepository.saveService(service);
+    }
+
+    public async updateService(serviceUpdate: ServiceUpdate): Promise<Service> {
+        const existingService: Service = (await this.findServiceById(serviceUpdate.id))
+            .orElseThrow(() => new NotFoundException(`service with id: ${serviceUpdate.id} not found during update;`));
+        const updatedService = new Service(serviceUpdate.id, existingService.name, serviceUpdate.owner, serviceUpdate.vertical);
+        return this.saveService(updatedService);
+    }
+
+    public deleteService(serviceId: string): Promise<boolean> {
+        return this.serviceRepository.deleteService(serviceId);
     }
 
     public async findServiceById(id: string): Promise<Optional<Service>> {

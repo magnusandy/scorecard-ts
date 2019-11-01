@@ -11,6 +11,11 @@ export interface ServiceDTO {
     vertical: string;
 }
 
+export interface ServiceUpdateDTO {
+    owner: string;
+    vertical: string;
+}
+
 export interface ServiceList {
     services: ServiceDTO[];
 }

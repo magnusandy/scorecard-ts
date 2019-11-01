@@ -2,6 +2,7 @@ export enum ExceptionType {
     NotFound = "NotFound",
     Unknown = "Unknown",
     BadState = "BadState",
+    Validation= "Validation"
 }
 
 export interface Exception extends Error {
@@ -36,6 +37,16 @@ export class UnknownException implements Exception {
 
     public constructor(message: string) {
         this.message = message;
+    }
+}
+
+export class ValidationException implements Exception {
+    public name: string = "ValidationException";
+    public type: ExceptionType = ExceptionType.Unknown;
+    public message: string;
+
+    public constructor(fieldName: string, value?: any) {
+        this.message = `Field named ${fieldName} not valid, value was "${value}"` ;
     }
 }
 

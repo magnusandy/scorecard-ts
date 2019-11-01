@@ -18,7 +18,7 @@ interface ServiceList {
 
 export async function getAllServices(): Promise<Service[]> {
     try {
-        const response = await fetch("http://localhost:4000/service", {
+        const response = await fetch("http://localhost:8080/service", {
             method: "GET",
             mode: "cors"
         });
@@ -33,7 +33,7 @@ export async function getAllServices(): Promise<Service[]> {
 
 export async function createNewService(create: CreateService): Promise<Service> {
     console.log(create);
-    const response = await fetch("http://localhost:4000/service", {
+    const response = await fetch("http://localhost:8080/service", {
         method: "POST",
         mode: "cors",
         headers: {

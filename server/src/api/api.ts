@@ -1,4 +1,4 @@
-import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion } from "./dtos";
+import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO } from "./dtos";
 import { ServiceService } from "../domain/service/serviceService";
 import { Service } from "../domain/service/service";
 import uuid = require("uuid");
@@ -37,7 +37,15 @@ export class Api {
         return {
             services: services.map(s => this.serviceToDto(s))
         }
+    }
 
+    public async updateService(serviceId: string, updateDto: ServiceUpdateDTO): Promise<ServiceDTO> {
+        const service = await this.serviceService.updateService({ id: serviceId, ...updateDto });
+        return this.serviceToDto(service);
+    }
+
+    public deleteService(serviceId: string): Promise<boolean> {
+        return this.serviceService.deleteService(serviceId);
     }
 
     public async createQuestion(createQuestion: CreateQuestion, now: Date) {
