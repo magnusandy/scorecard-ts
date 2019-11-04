@@ -1,4 +1,7 @@
 import { QuestionDTO, RevisionDTO } from "../shared/api";
+import { format, formatDistance, formatRelative, subDays } from 'date-fns'
+
+
 export class Question {
     private id: string;
     private revisions: RevisionDTO[];
@@ -17,5 +20,12 @@ export class Question {
             return r1.revisionNumber - r2.revisionNumber;
         });
         return sorted[sorted.length - 1];
+    }
+
+    public getOrderedRevisions(): RevisionDTO[] {
+        const sorted = this.revisions.sort((r1, r2) => {
+            return r1.revisionNumber - r2.revisionNumber;
+        });
+        return sorted;
     }
 }

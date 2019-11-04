@@ -3,6 +3,7 @@ import { Message, Table, Label, Button, Header } from "semantic-ui-react";
 import { getAllQuestions } from "../api";
 import { Question } from "./question";
 import { Optional } from "java8script";
+import EditQuestionModalButton from "./editModal"
 
 export interface Props {
     searchFilter: Optional<string>;
@@ -61,8 +62,10 @@ const renderRow = (question: Question) => {
             {latestRevision.scoreOptions.map(s => <Label>{s}</Label>)}
         </Table.Cell>
         <Table.Cell collapsing>
-            <Button onClick={() => { }}>History</Button>
-            <Button color="orange" onClick={() => { }}>Edit</Button>
+            <EditQuestionModalButton
+                handleUpdateQuestion={() => { }}
+                question={question}
+            />
             <Button color="red" onClick={() => { }}>Delete</Button>
         </Table.Cell>
     </Table.Row>;
