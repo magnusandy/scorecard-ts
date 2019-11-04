@@ -30,12 +30,12 @@ const App: React.FC = () => {
         <Route path="/services">
           <PaddedDiv>
             <ServicesApp
-            searchFilter={search} />
+              searchFilter={search} />
           </PaddedDiv>
         </Route>
         <Route path="/questions">
           <PaddedDiv>
-            <QuestionsApp />
+            <QuestionsApp searchFilter={search} />
           </PaddedDiv>
         </Route>
       </Switch>

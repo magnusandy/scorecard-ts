@@ -4,6 +4,7 @@ import { Exception, UnknownException, ValidationException } from "../domain/exce
 import { CreateService, ServiceUpdateDTO, ServerError, CreateQuestion, ReviseQuestion } from "../shared/api";
 import cors from "cors";
 import e from "cors";
+import { Optional } from "java8script";
 
 type RequestFunction = (req: Request, res: Response) => void;
 type RequestFunctionPromise<T> = (req: Request, res: Response) => Promise<T>;
@@ -64,9 +65,11 @@ export class RootService {
 
         this.postAsync("/question", (req, res) => {
             const unvalidatedBody = req.body;
+            console.log(unvalidatedBody);
             const createDto: CreateQuestion = {
                 text: validateString("text", unvalidatedBody.text),
-                scores: validateArray("scores", unvalidatedBody.scores, 2)
+                scores: validateArray("scores", unvalidatedBody.scores, 2),
+                desc: unvalidatedBody.desc
             }
             return this.api.createQuestion(createDto, new Date());
         });
@@ -74,10 +77,12 @@ export class RootService {
         this.putAsync("/question/:questionId", (req, res) => {
             const questionId = validateString("questionId", req.params.questionId);
             const unvalidatedBody = req.body;
+            console.log(unvalidatedBody);
             const reviseQuestion: ReviseQuestion = {
                 revisionNumber: validateNumber("revisionNumber", unvalidatedBody.revisionNumber),
                 text: validateString("text", unvalidatedBody.text),
-                scores: validateArray("scores", unvalidatedBody.scores)
+                scores: validateArray("scores", unvalidatedBody.scores),
+                desc: unvalidatedBody.desc
             };
             return this.api.reviseQuestion(questionId, reviseQuestion, new Date())
         })

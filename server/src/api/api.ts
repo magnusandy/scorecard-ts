@@ -60,7 +60,7 @@ export class Api {
         const question: Question = new Question(
             uuid.v4(),
             [
-                new Revision(1, now, createQuestion.text, createQuestion.scores)
+                new Revision(1, now, createQuestion.text, createQuestion.scores, Optional.ofNullable(createQuestion.desc))
             ]
         );
         return this.questionService.saveQuestion(question);
@@ -70,9 +70,11 @@ export class Api {
         return this.questionService.updateQuestion({
             questionId: questionId,
             newRevisionNumber: reviseQuestion.revisionNumber,
-            ...reviseQuestion
+            desc: Optional.ofNullable(reviseQuestion.desc),
+            text: reviseQuestion.text,
+            scores: reviseQuestion.scores
         }, now)
-        .then(this.questionToDto);
+            .then(this.questionToDto);
     }
 
     private serviceToDto(service: Service): ServiceDTO {
@@ -91,7 +93,8 @@ export class Api {
                 revisionNumber: r.revisionNumber,
                 revisionTime: r.revisionTime.valueOf(),
                 questionText: r.questionText,
-                scoreOptions: r.getScoreChoices()
+                questionDescription: r.questionDescription.orElse(undefined),
+                scoreOptions: r.getScoreChoices(),
             }))
         };
     }

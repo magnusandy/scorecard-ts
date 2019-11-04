@@ -8,6 +8,7 @@ interface SerializedRevision {
     revisionNumber: number;
     revisionTime: number; //timestamp
     questionText: string;
+    description?: string;
     scoreChoices: number[];
 }
 
@@ -21,6 +22,7 @@ const revisions = "revisions";
 const revisionNumber = "revisionNumber";
 const revisionTime = "revisionTime";
 const questionText = "questionText";
+const description = "description";
 const scoreChoices = "scoreChoices";
 
 
@@ -69,21 +71,29 @@ export class FirestoreQuestionRepository implements QuestionRepository {
     }
 
     private serializeRevision(revision: Revision): SerializedRevision {
-        return {
+        const serialized = {
             [revisionNumber]: revision.revisionNumber,
             [revisionTime]: revision.revisionTime.valueOf(),
             [questionText]: revision.questionText,
             [scoreChoices]: revision.getScoreChoices(),
-        }
+        };
+        revision.questionDescription.ifPresent(desc => serialized[description] = desc);
+        return serialized;
     }
 
     private deserializeQuestion(snap: DocumentSnapshot): Optional<Question> {
         if (snap.exists) {
             const data: DocumentData = snap.data();
             const serializedQuestion = data as SerializedQuestion;
+            console.log(serializedQuestion);
             return Optional.of(new Question(
                 serializedQuestion.id,
-                serializedQuestion.revisions.map(r => new Revision(r.revisionNumber, new Date(r.revisionTime), r.questionText, r.scoreChoices))));
+                serializedQuestion.revisions.map(r => new Revision(r.revisionNumber,
+                    new Date(r.revisionTime),
+                    r.questionText,
+                    r.scoreChoices,
+                    Optional.ofNullable(r.description))
+                )));
         } else {
             return Optional.empty();
         }

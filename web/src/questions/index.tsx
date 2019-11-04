@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { QuestionDTO } from "../shared/api"
-import { Message, Table, Label, Button } from "semantic-ui-react";
+import { Message, Table, Label, Button, Header } from "semantic-ui-react";
 import { getAllQuestions } from "../api";
 import { Question } from "./question";
-const QuestionsApp: React.FC = () => {
+import { Optional } from "java8script";
+
+export interface Props {
+    searchFilter: Optional<string>;
+}
+
+function questionMatchFilter(q: Question, filter: string): boolean {
+    const latest = q.latestRevision();
+    return latest.questionText.startsWith(filter);
+}
+
+const QuestionsApp: React.FC<Props> = (props) => {
     const [error, setError] = useState<string>();
     const [questions, setQuestions] = useState<Question[]>([]);
 
@@ -12,6 +22,8 @@ const QuestionsApp: React.FC = () => {
             .then(q => setQuestions(q))
             .catch(e => setError("Problem Fetching Question List"));
     }, []);
+
+    const filteredQuestions = questions.filter(q => props.searchFilter.map(filter => questionMatchFilter(q, filter)).orElse(true));
 
     return (
         <>
@@ -22,7 +34,7 @@ const QuestionsApp: React.FC = () => {
                     <p>{error}</p>
                 </Message>
             }
-            <Table celled padded fixed>
+            <Table celled padded>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Question</Table.HeaderCell>
@@ -31,7 +43,7 @@ const QuestionsApp: React.FC = () => {
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {questions.map(q => renderRow(q))}
+                    {filteredQuestions.map(q => renderRow(q))}
                 </Table.Body>
             </Table>
         </>
@@ -42,12 +54,13 @@ const renderRow = (question: Question) => {
     const latestRevision = question.latestRevision();
     return <Table.Row>
         <Table.Cell>
-            {latestRevision.questionText}
+            <Header>{latestRevision.questionText}</Header>
+            {latestRevision.questionDescription && <p>{latestRevision.questionDescription}</p>}
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell collapsing>
             {latestRevision.scoreOptions.map(s => <Label>{s}</Label>)}
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell collapsing>
             <Button onClick={() => { }}>History</Button>
             <Button color="orange" onClick={() => { }}>Edit</Button>
             <Button color="red" onClick={() => { }}>Delete</Button>

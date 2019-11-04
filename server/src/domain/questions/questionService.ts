@@ -24,7 +24,8 @@ export class QuestionService {
         } else if ((updateQuestion.newRevisionNumber - latest) > 1) {
             throw new BadStateException(`new revision ${updateQuestion.newRevisionNumber} is not in sequence for question ${updateQuestion.questionId}.`);
         } else {
-            const updatedQuestion: Question = existingQuestion.addRevision(new Revision(updateQuestion.newRevisionNumber, requestTime, updateQuestion.text, updateQuestion.scores));
+            console.log(updateQuestion);
+            const updatedQuestion: Question = existingQuestion.addRevision(new Revision(updateQuestion.newRevisionNumber, requestTime, updateQuestion.text, updateQuestion.scores, updateQuestion.desc));
             return this.questionRepository.saveQuestion(updatedQuestion);
         }
     }

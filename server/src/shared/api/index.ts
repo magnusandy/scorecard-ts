@@ -25,6 +25,7 @@ export interface ServiceList {
 
 export interface CreateQuestion {
     text: string;
+    desc?: string;
     scores: number[];
 }
 
@@ -37,6 +38,7 @@ export interface RevisionDTO {
     revisionNumber: number;
     revisionTime: number; //timestamp
     questionText: string;
+    questionDescription?: string;
     scoreOptions: number[];
 }
 
@@ -47,6 +49,7 @@ export interface QuestionList {
 export interface ReviseQuestion {
     revisionNumber: number;
     text: string;
+    desc?: string;
     scores: number[];
 }
 

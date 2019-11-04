@@ -1,3 +1,5 @@
+import { Optional } from "java8script";
+
 export class Question {
     public readonly questionId: string;
     private revisions: Revision[];
@@ -28,13 +30,15 @@ export class Revision {
     public readonly revisionNumber: number;
     public readonly revisionTime: Date;
     public readonly questionText: string;
+    public readonly questionDescription: Optional<string>;
     private scoreChoices: number[];
 
-    constructor(revisionNumber: number, revisionTime: Date, text: string, choices: number[]) {
+    constructor(revisionNumber: number, revisionTime: Date, text: string, choices: number[], questionDescription: Optional<string>) {
         this.revisionNumber = revisionNumber;
         this.revisionTime = revisionTime;
         this.questionText = text;
         this.scoreChoices = choices;
+        this.questionDescription = questionDescription;
     }
 
     public getScoreChoices(): number[] {
@@ -46,5 +50,6 @@ export interface UpdateQuestion {
     questionId: string;
     newRevisionNumber: number;
     text: string;
+    desc: Optional<string>;
     scores: number[];
 }
