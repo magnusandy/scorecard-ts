@@ -1,8 +1,9 @@
 import { ServiceRepository } from "../domain/service/serviceRepository";
-import { Firestore, CollectionReference, DocumentReference, DocumentSnapshot, DocumentData } from "@google-cloud/firestore";
+import { Firestore, CollectionReference, DocumentReference, DocumentSnapshot, DocumentData, Query } from "@google-cloud/firestore";
 import { Service } from "../domain/service/service";
 import { Optional } from "java8script";
 import { UnknownException } from "../domain/exceptions";
+import { ServiceQuery } from "../domain/service/serviceQuery";
 
 interface SerializedService {
     id: string;
@@ -10,6 +11,11 @@ interface SerializedService {
     team: string;
     department: string;
 }
+const id = "id";
+const name = "name";
+const team = "team";
+const department = "department";
+
 
 export class FirestoreServiceRepository implements ServiceRepository {
     private firestore: Firestore;
@@ -36,16 +42,16 @@ export class FirestoreServiceRepository implements ServiceRepository {
     }
 
     public findService(id: string): Promise<Optional<Service>> {
-        const serviceRef: DocumentReference = this.serviceCollection.doc(id);
-        return serviceRef.get()
-            .then(doc => this.deserializeService(doc))
+        return this.findServices({ id: id })
+            .then(services => Optional.ofNullable(services[0]))
             .catch(err => {
                 throw new UnknownException(`error findService: \n ${JSON.stringify(err)}`);
             });
     }
 
-    public findServices(): Promise<Service[]> {
-        return this.serviceCollection.get()
+    public findServices(query: ServiceQuery): Promise<Service[]> {
+        return this.findServicesQuery(query)
+            .get()
             .then((snapshot) =>
                 snapshot.docs
                     .map(this.deserializeService)
@@ -54,12 +60,26 @@ export class FirestoreServiceRepository implements ServiceRepository {
             )
             .catch(err => {
                 throw new UnknownException(`error findServices: \n ${JSON.stringify(err)}`);
-            })
+            });
+    }
+
+    private findServicesQuery(query: ServiceQuery): Query {
+        var collectionRef: Query = this.serviceCollection;
+        if (query.id) {
+            collectionRef = collectionRef.where(id, "==", query.id);
+        }
+        if (query.name) {
+            collectionRef = collectionRef.where(name, "==", query.name);
+        }
+        return collectionRef;
     }
 
     private serializeService(service: Service): SerializedService {
         return {
-            ...service
+            [id]: service.id,
+            [name]: service.name,
+            [team]: service.team,
+            [department]: service.department
         }
     }
     private deserializeService(doc: DocumentSnapshot): Optional<Service> {

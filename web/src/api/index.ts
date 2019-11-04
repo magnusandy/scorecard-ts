@@ -1,4 +1,5 @@
-import {ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO} from "../shared/api";
+import {ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError} from "../shared/api";
+import { ExceptionType } from "../shared/domain";
 
 interface ServiceUpdateWithId extends ServiceUpdateDTO {
     id: string;
@@ -28,11 +29,17 @@ export async function createNewService(create: CreateService): Promise<ServiceDT
         },
         body: JSON.stringify(create)
     });
-    const json = await response.json();
-    if (response.status !== 200) {
-        throw "Something went wrong";
+    if (response.status === 400) {
+        const json = await response.json() as ServerError;
+        throw json;
+    } else if (response.status !== 200) {
+        const error: ServerError = {
+            type: "Unknown",
+            message: "Something Unknown went wrong!"
+        }
+        throw error;
     }
-    console.log(json);
+    const json = await response.json();
     return json as ServiceDTO;
 }
 

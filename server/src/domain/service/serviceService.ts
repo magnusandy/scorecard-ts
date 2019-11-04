@@ -2,7 +2,8 @@ import { ServiceRepository } from "./serviceRepository";
 import { Service } from "./service";
 import { Optional } from "java8script";
 import ServiceUpdate from "./serviceUpdate";
-import { NotFoundException } from "../exceptions";
+import { NotFoundException, IllegalArgumentException } from "../exceptions";
+import { ServiceQuery } from "./serviceQuery";
 
 export class ServiceService {
     private serviceRepository: ServiceRepository;
@@ -11,8 +12,13 @@ export class ServiceService {
         this.serviceRepository = serviceRepository;
     }
 
-    public saveService(service: Service): Promise<Service> {
-        return this.serviceRepository.saveService(service);
+    public async saveService(service: Service): Promise<Service> {
+        const withName: Service[] = await this.serviceRepository.findServices({ name: service.name });
+        if (withName.length > 0) {
+            throw new IllegalArgumentException(`Cannot create a new service, one with the name ${service.name} already exists.`)
+        } else {
+            return this.serviceRepository.saveService(service);
+        }
     }
 
     public async updateService(serviceUpdate: ServiceUpdate): Promise<Service> {
@@ -30,7 +36,7 @@ export class ServiceService {
         return this.serviceRepository.findService(id);
     }
 
-    public findServices(): Promise<Service[]> {
-        return this.serviceRepository.findServices();
+    public findServices(query: ServiceQuery): Promise<Service[]> {
+        return this.serviceRepository.findServices(query);
     }
 }

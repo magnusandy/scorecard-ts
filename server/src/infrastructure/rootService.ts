@@ -27,7 +27,7 @@ export class RootService {
         });
 
         this.getAsync("/service", (req, res) => {
-            return this.api.findServices();
+            return this.api.findAllServices();
         })
 
         this.postAsync("/service", (req, res) => {
@@ -95,8 +95,10 @@ function promiseErrorMiddleware<T>(reqFunction: RequestFunctionPromise<T>): Requ
             console.log(error);
             const exception: Exception = error;
             if (exception.type && exception.message) {
-                if (exception.type === ExceptionType.NotFound) {
+                if (exception.type === "NotFound") {
                     res.status(404);
+                } else if (exception.type === "IllegalArgument") {
+                    res.status(400);
                 } else {
                     res.status(500);
                 }

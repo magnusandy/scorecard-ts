@@ -1,6 +1,1 @@
-export enum ExceptionType {
-    NotFound = "NotFound",
-    Unknown = "Unknown",
-    BadState = "BadState",
-    Validation= "Validation"
-}
+export type ExceptionType = "NotFound" | "Unknown" | "BadState" | "Validation" | "IllegalArgument";

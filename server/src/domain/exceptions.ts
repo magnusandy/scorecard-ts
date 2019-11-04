@@ -7,7 +7,16 @@ export interface Exception extends Error {
 
 export class NotFoundException implements Exception {
     public name: string = "NotFoundException";
-    public type: ExceptionType = ExceptionType.NotFound;
+    public type: ExceptionType = "NotFound";
+    public message: string;
+
+    public constructor(message: string) {
+        this.message = message;
+    }
+}
+export class IllegalArgumentException implements Exception {
+    public name: string = "IllegalArgumentException";
+    public type: ExceptionType = "IllegalArgument";
     public message: string;
 
     public constructor(message: string) {
@@ -17,7 +26,7 @@ export class NotFoundException implements Exception {
 
 export class BadStateException implements Exception {
     public name: string = "BadStateException";
-    public type: ExceptionType = ExceptionType.BadState;
+    public type: ExceptionType = "BadState";
     public message: string;
 
     public constructor(message: string) {
@@ -27,7 +36,7 @@ export class BadStateException implements Exception {
 
 export class UnknownException implements Exception {
     public name: string = "UnknownException";
-    public type: ExceptionType = ExceptionType.Unknown;
+    public type: ExceptionType = "Unknown";
     public message: string;
 
     public constructor(message: string) {
@@ -37,7 +46,7 @@ export class UnknownException implements Exception {
 
 export class ValidationException implements Exception {
     public name: string = "ValidationException";
-    public type: ExceptionType = ExceptionType.Unknown;
+    public type: ExceptionType = "Validation";
     public message: string;
 
     public constructor(fieldName: string, value?: any) {

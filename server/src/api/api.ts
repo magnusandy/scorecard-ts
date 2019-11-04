@@ -32,8 +32,8 @@ export class Api {
         return this.serviceToDto(service);
     }
 
-    public async findServices(): Promise<ServiceList> {
-        const services = await this.serviceService.findServices();
+    public async findAllServices(): Promise<ServiceList> {
+        const services = await this.serviceService.findServices({});
         return {
             services: services.map(s => this.serviceToDto(s))
         }
