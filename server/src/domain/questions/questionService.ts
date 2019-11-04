@@ -23,7 +23,6 @@ export class QuestionService {
             throw new BadStateException(`revision ${updateQuestion.newRevisionNumber} has already been created for question ${updateQuestion.questionId}.`);
         } else if ((updateQuestion.newRevisionNumber - latest) > 1) {
             throw new BadStateException(`new revision ${updateQuestion.newRevisionNumber} is not in sequence for question ${updateQuestion.questionId}.`);
-
         } else {
             const updatedQuestion: Question = existingQuestion.addRevision(new Revision(updateQuestion.newRevisionNumber, requestTime, updateQuestion.text, updateQuestion.scores));
             return this.questionRepository.saveQuestion(updatedQuestion);

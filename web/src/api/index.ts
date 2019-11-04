@@ -1,5 +1,6 @@
-import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError } from "../shared/api";
+import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError, QuestionList, QuestionDTO } from "../shared/api";
 import { ExceptionType } from "../shared/domain";
+import { Question } from "../questions/question";
 
 interface ServiceUpdateWithId extends ServiceUpdateDTO {
     id: string;
@@ -74,5 +75,21 @@ export async function deleteService(serviceId: string): Promise<boolean> {
         throw `Delete of service with id: ${serviceId} failed`;
     } else {
         return true;
+    }
+}
+
+export async function getAllQuestions(): Promise<Question[]> {
+    try {
+        const response = await fetch("http://localhost:8080/question", {
+            method: "GET",
+            mode: "cors"
+        });
+        const json = await response.json();
+        return (json as QuestionList).questions
+            .map(q => Question.fromDTO(q));
+    } catch (error) {
+        console.log("error fetching question")
+        console.log(error);
+        throw error;
     }
 }

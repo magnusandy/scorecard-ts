@@ -73,7 +73,7 @@ const ServicesApp: React.FC<Props> = (props) => {
             <CreateServiceModalButton handleNewService={handleNewService} />
 
             {error &&
-                <Message warning>
+                <Message error>
                     <Message.Header>Problem with Operation!</Message.Header>
                     <p>{error}</p>
                 </Message>
