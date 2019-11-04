@@ -1,9 +1,9 @@
 import { Application, Response, Request } from "express";
 import { Api } from "../api/api";
 import { Exception, UnknownException, ValidationException } from "../domain/exceptions";
-import { CreateService, ServiceUpdateDTO, ServerError } from "../shared/api";
+import { CreateService, ServiceUpdateDTO, ServerError, CreateQuestion, ReviseQuestion } from "../shared/api";
 import cors from "cors";
-import { ExceptionType } from "../shared/domain";
+import e from "cors";
 
 type RequestFunction = (req: Request, res: Response) => void;
 type RequestFunctionPromise<T> = (req: Request, res: Response) => Promise<T>;
@@ -28,7 +28,7 @@ export class RootService {
 
         this.getAsync("/service", (req, res) => {
             return this.api.findAllServices();
-        })
+        });
 
         this.postAsync("/service", (req, res) => {
 
@@ -58,6 +58,30 @@ export class RootService {
             return this.api.deleteService(serviceId);
         });
 
+        this.getAsync("/question", () =>
+            this.api.findQuestions()
+        );
+
+        this.postAsync("/question", (req, res) => {
+            const unvalidatedBody = req.body;
+            const createDto: CreateQuestion = {
+                text: validateString("text", unvalidatedBody.text),
+                scores: validateArray("scores", unvalidatedBody.scores, 2)
+            }
+            return this.api.createQuestion(createDto, new Date());
+        });
+
+        this.putAsync("/question/:questionId", (req, res) => {
+            const questionId = validateString("questionId", req.params.questionId);
+            const unvalidatedBody = req.body;
+            const reviseQuestion: ReviseQuestion = {
+                revisionNumber: validateNumber("revisionNumber", unvalidatedBody.revisionNumber),
+                text: validateString("text", unvalidatedBody.text),
+                scores: validateArray("scores", unvalidatedBody.scores)
+            };
+            return this.api.reviseQuestion(questionId, reviseQuestion, new Date())
+        })
+
         this.expressServer.listen(8080, () => console.log(`listening on port 8080`));
     }
 
@@ -86,6 +110,29 @@ function validateString(name: string, val: string): string {
     }
 }
 
+function validateNumber(name: string, val: number): number {
+    if (val !== undefined) {
+        return val;
+    } else {
+        throw new ValidationException(name, val);
+    }
+}
+
+function validateArray<X>(name: string, val: X[], minVals?: number, maxVals?: number): X[] {
+    const exception = new ValidationException(name, val);
+    if (!val) {
+        throw exception;
+    }
+    if (minVals && val.length < minVals) {
+        throw exception;
+    }
+    if (maxVals && val.length > maxVals) {
+        throw exception;
+    }
+    return val;
+
+}
+
 function promiseErrorMiddleware<T>(reqFunction: RequestFunctionPromise<T>): RequestFunction {
     return async (req, res) => {
         try {
@@ -99,6 +146,8 @@ function promiseErrorMiddleware<T>(reqFunction: RequestFunctionPromise<T>): Requ
                 if (exception.type === "NotFound") {
                     res.status(404);
                 } else if (exception.type === "IllegalArgument") {
+                    res.status(400);
+                } else if (exception.type === "Validation") {
                     res.status(400);
                 } else {
                     res.status(500);

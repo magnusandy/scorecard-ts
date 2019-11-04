@@ -50,7 +50,7 @@ export class ValidationException implements Exception {
     public message: string;
 
     public constructor(fieldName: string, value?: any) {
-        this.message = `Field named ${fieldName} not valid, value was "${value}"` ;
+        this.message = `Field named ${fieldName} not valid, value was "${JSON.stringify(value)}"` ;
     }
 }
 

@@ -1,4 +1,4 @@
-import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO } from "../shared/api";
+import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO, QuestionList, QuestionDTO } from "../shared/api";
 import { ServiceService } from "../domain/service/serviceService";
 import { Service } from "../domain/service/service";
 import uuid = require("uuid");
@@ -15,6 +15,7 @@ export class Api {
     public constructor(serviceService: ServiceService,
         questionService: QuestionService) {
         this.serviceService = serviceService;
+        this.questionService = questionService;
     }
 
     public async saveNewService(createService: CreateService): Promise<ServiceDTO> {
@@ -48,6 +49,13 @@ export class Api {
         return this.serviceService.deleteService(serviceId);
     }
 
+    public async findQuestions(): Promise<QuestionList> {
+        const questions = await this.questionService.findQuestions();
+        return {
+            questions: questions.map(q => this.questionToDto(q))
+        };
+    }
+
     public async createQuestion(createQuestion: CreateQuestion, now: Date) {
         const question: Question = new Question(
             uuid.v4(),
@@ -58,11 +66,13 @@ export class Api {
         return this.questionService.saveQuestion(question);
     }
 
-    public async reviseQuestion(reviseQuestion: ReviseQuestion, now: Date) {
-        this.questionService.updateQuestion({
+    public reviseQuestion(questionId: string, reviseQuestion: ReviseQuestion, now: Date): Promise<QuestionDTO> {
+        return this.questionService.updateQuestion({
+            questionId: questionId,
             newRevisionNumber: reviseQuestion.revisionNumber,
             ...reviseQuestion
-        }, now);
+        }, now)
+        .then(this.questionToDto);
     }
 
     private serviceToDto(service: Service): ServiceDTO {
@@ -71,6 +81,18 @@ export class Api {
             name: service.name,
             team: service.team,
             department: service.department
+        };
+    }
+
+    private questionToDto(question: Question): QuestionDTO {
+        return {
+            id: question.questionId,
+            revisions: question.getRevisions().map(r => ({
+                revisionNumber: r.revisionNumber,
+                revisionTime: r.revisionTime.valueOf(),
+                questionText: r.questionText,
+                scoreOptions: r.getScoreChoices()
+            }))
         };
     }
 }

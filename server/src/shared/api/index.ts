@@ -28,8 +28,23 @@ export interface CreateQuestion {
     scores: number[];
 }
 
+export interface QuestionDTO {
+    id: string;
+    revisions: RevisionDTO[];
+}
+
+export interface RevisionDTO {
+    revisionNumber: number;
+    revisionTime: number; //timestamp
+    questionText: string;
+    scoreOptions: number[];
+}
+
+export interface QuestionList {
+    questions: QuestionDTO[];
+}
+
 export interface ReviseQuestion {
-    questionId: string;
     revisionNumber: number;
     text: string;
     scores: number[];

@@ -14,14 +14,18 @@ export class QuestionService {
         return this.questionRepository.saveQuestion(question);
     }
 
-    async updateQuestion(updateQuestion: UpdateQuestion, requestTime: Date): Promise<Question> {
+    public async updateQuestion(updateQuestion: UpdateQuestion, requestTime: Date): Promise<Question> {
         const existingQuestion: Question = (await this.questionRepository.findQuestionById(updateQuestion.questionId))
             .orElseThrow(() => new NotFoundException(`cannot update question ${updateQuestion.questionId}, does not exist.`));
 
-        if(existingQuestion.latestRevision().revisionNumber.valueOf() >= updateQuestion.newRevisionNumber) {
+        const latest = existingQuestion.latestRevision().revisionNumber;
+        if (latest >= updateQuestion.newRevisionNumber) {
             throw new BadStateException(`revision ${updateQuestion.newRevisionNumber} has already been created for question ${updateQuestion.questionId}.`);
+        } else if ((updateQuestion.newRevisionNumber - latest) > 1) {
+            throw new BadStateException(`new revision ${updateQuestion.newRevisionNumber} is not in sequence for question ${updateQuestion.questionId}.`);
+
         } else {
-            const updatedQuestion:Question = existingQuestion.addRevision(new Revision(updateQuestion.newRevisionNumber, requestTime, updateQuestion.text, updateQuestion.scores));
+            const updatedQuestion: Question = existingQuestion.addRevision(new Revision(updateQuestion.newRevisionNumber, requestTime, updateQuestion.text, updateQuestion.scores));
             return this.questionRepository.saveQuestion(updatedQuestion);
         }
     }

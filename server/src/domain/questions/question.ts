@@ -18,6 +18,10 @@ export class Question {
         this.revisions.push(r);
         return this;
     }
+
+    public getRevisions(): Revision[] {
+        return [...this.revisions];
+    }
 }
 
 export class Revision {
@@ -28,8 +32,13 @@ export class Revision {
 
     constructor(revisionNumber: number, revisionTime: Date, text: string, choices: number[]) {
         this.revisionNumber = revisionNumber;
+        this.revisionTime = revisionTime;
         this.questionText = text;
-        this.scoreChoices = this.scoreChoices;
+        this.scoreChoices = choices;
+    }
+
+    public getScoreChoices(): number[] {
+        return [...this.scoreChoices];
     }
 }
 
