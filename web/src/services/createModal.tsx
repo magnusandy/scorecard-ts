@@ -1,10 +1,11 @@
 import React, { useState, ChangeEvent } from 'react'
 import { Button, Header, Modal, Input, Grid, GridColumn, Form } from 'semantic-ui-react'
-import { createNewService, Service } from '../api';
+import { createNewService } from '../api';
 import styled from 'styled-components';
+import { ServiceDTO } from '../shared/dtos';
 
 interface Props {
-    handleNewService: (service: Service) => void;
+    handleNewService: (service: ServiceDTO) => void;
 }
 
 const CreateServiceModalButton: React.FC<Props> = (props) => {

@@ -1,7 +1,7 @@
 import { Application, Response, Request } from "express";
 import { Api } from "../api/api";
 import { Exception, ExceptionType, UnknownException, ValidationException } from "../domain/exceptions";
-import { CreateService, ServiceUpdateDTO } from "../api/dtos";
+import { CreateService, ServiceUpdateDTO } from "../shared/dtos";
 import cors from "cors";
 
 type RequestFunction = (req: Request, res: Response) => void;

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Menu } from "semantic-ui-react";
 import { Link, BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ServicesApp from './services';
 import QuestionsApp from './questions';

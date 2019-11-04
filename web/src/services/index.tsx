@@ -1,40 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { Table, Header, Button, Message } from "semantic-ui-react";
-import { getAllServices, Service, deleteService } from "../api";
+import { getAllServices, deleteService } from "../api";
 import { Optional } from "java8script";
 import EditServiceModalButton from "./editModal";
 import CreateServiceModalButton from "./createModal";
+import { ServiceDTO } from "../shared/dtos";
 
 export interface Props {
     searchFilter: Optional<string>;
 }
 
-const serviceMatchesFilter = (filter: string, service: Service): boolean => {
+const serviceMatchesFilter = (filter: string, service: ServiceDTO): boolean => {
     return service.name.startsWith(filter) || service.owner.startsWith(filter) || service.vertical.startsWith(filter);
 }
 
 const ServicesApp: React.FC<Props> = (props) => {
 
-    const [services, setServices] = useState<Service[]>([]);
+    const [services, setServices] = useState<ServiceDTO[]>([]);
     const [error, setError] = useState<string>();
 
     useEffect(() => {
         getAllServices()
             .then(services => setServices(services))
-            .catch(e => setError("Problem Fetching Service List"));
+            .catch(e => setError("Problem Fetching ServiceDTO List"));
     }, []);
 
-    const handleNewService = (service: Service) => {
+    const handleNewService = (service: ServiceDTO) => {
         setServices([...services, service]);
     }
 
-    const handleUpdatedService = (updatedService:Service) => {
+    const handleUpdatedService = (updatedService: ServiceDTO) => {
         const filteredService = services.filter(s => s.id !== updatedService.id);
         setServices([updatedService, ...filteredService]);
 
     }
 
-    const handleDelete = (service: Service) => {
+    const handleDelete = (service: ServiceDTO) => {
         deleteService(service.id)
             .then(() => {
                 const filteredService = services.filter(s => s.id !== service.id);
@@ -45,7 +46,7 @@ const ServicesApp: React.FC<Props> = (props) => {
             });
     };
 
-    const renderRow = (service: Service) => {
+    const renderRow = (service: ServiceDTO) => {
         return (
             <Table.Row>
                 <Table.Cell>
@@ -56,7 +57,7 @@ const ServicesApp: React.FC<Props> = (props) => {
                 <Table.Cell singleLine>{service.owner}</Table.Cell>
                 <Table.Cell singleLine>{service.vertical}</Table.Cell>
                 <Table.Cell >
-                    <EditServiceModalButton service={service} handleUpdateService={handleUpdatedService}/>
+                    <EditServiceModalButton service={service} handleUpdateService={handleUpdatedService} />
                     <Button color="red" onClick={() => handleDelete(service)}>Delete</Button>
                 </Table.Cell>
             </Table.Row>
@@ -80,7 +81,7 @@ const ServicesApp: React.FC<Props> = (props) => {
             <Table celled padded>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell singleLine>Service Name</Table.HeaderCell>
+                        <Table.HeaderCell singleLine>ServiceDTO Name</Table.HeaderCell>
                         <Table.HeaderCell>Owner</Table.HeaderCell>
                         <Table.HeaderCell>Vertical</Table.HeaderCell>
                         <Table.HeaderCell>Options</Table.HeaderCell>

@@ -1,28 +1,10 @@
-export interface Service {
+import {ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO} from "../shared/dtos";
+
+interface ServiceUpdateWithId extends ServiceUpdateDTO {
     id: string;
-    name: string;
-    owner: string;
-    vertical: string;
 }
 
-export interface CreateService {
-    name: string;
-    owner: string;
-    vertical: string;
-}
-
-export interface UpdateService {
-    id: string;
-    owner: string;
-    vertical: string;
-}
-
-interface ServiceList {
-    services: Service[];
-}
-
-
-export async function getAllServices(): Promise<Service[]> {
+export async function getAllServices(): Promise<ServiceDTO[]> {
     try {
         const response = await fetch("http://localhost:8080/service", {
             method: "GET",
@@ -37,7 +19,7 @@ export async function getAllServices(): Promise<Service[]> {
     }
 }
 
-export async function createNewService(create: CreateService): Promise<Service> {
+export async function createNewService(create: CreateService): Promise<ServiceDTO> {
     const response = await fetch("http://localhost:8080/service", {
         method: "POST",
         mode: "cors",
@@ -51,10 +33,10 @@ export async function createNewService(create: CreateService): Promise<Service> 
         throw "Something went wrong";
     }
     console.log(json);
-    return json as Service;
+    return json as ServiceDTO;
 }
 
-export async function updateService(update: UpdateService): Promise<Service> {
+export async function updateService(update: ServiceUpdateWithId): Promise<ServiceDTO> {
     const response = await fetch(`http://localhost:8080/service/${update.id}`, {
         method: "PUT",
         mode: "cors",
@@ -68,7 +50,7 @@ export async function updateService(update: UpdateService): Promise<Service> {
         throw "Something went wrong";
     }
     console.log(json);
-    return json as Service;
+    return json as ServiceDTO;
 }
 
 export async function deleteService(serviceId: string): Promise<boolean> {

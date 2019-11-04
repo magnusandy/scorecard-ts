@@ -1,10 +1,11 @@
 import React, { useState, ChangeEvent } from 'react'
 import { Button, Modal, Form } from 'semantic-ui-react'
-import { Service, updateService } from '../api';
+import { updateService } from '../api';
+import { ServiceDTO } from '../shared/dtos';
 
 interface Props {
-    handleUpdateService: (service: Service) => void;
-    service:Service;
+    handleUpdateService: (service: ServiceDTO) => void;
+    service: ServiceDTO;
 }
 
 const EditServiceModalButton: React.FC<Props> = (props) => {
@@ -44,7 +45,7 @@ const EditServiceModalButton: React.FC<Props> = (props) => {
                         disabled
                         label="Name"
                         value={props.service.name}
-                        />
+                    />
                     <Form.Input
                         fluid
                         label="Owner"
