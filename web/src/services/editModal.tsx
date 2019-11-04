@@ -10,8 +10,8 @@ interface Props {
 
 const EditServiceModalButton: React.FC<Props> = (props) => {
     const [open, setOpen] = useState<boolean>(false);
-    const [owner, setOwner] = useState<string>(props.service.owner);
-    const [vertical, setVertical] = useState<string>(props.service.vertical);
+    const [team, setteam] = useState<string>(props.service.team);
+    const [department, setdepartment] = useState<string>(props.service.department);
 
     const handleChange = (setFunction: React.Dispatch<React.SetStateAction<string>>) => {
         return (event: ChangeEvent<HTMLInputElement>) => setFunction(event.target.value)
@@ -22,9 +22,9 @@ const EditServiceModalButton: React.FC<Props> = (props) => {
     }
 
     const handleSubmit = () => {
-        if (isValid(vertical) && isValid(owner)) {
+        if (isValid(department) && isValid(team)) {
             const id = props.service.id;
-            updateService({ id, owner, vertical })
+            updateService({ id, team, department })
                 .then(service => {
                     props.handleUpdateService(service);
                     setOpen(false);
@@ -48,15 +48,15 @@ const EditServiceModalButton: React.FC<Props> = (props) => {
                     />
                     <Form.Input
                         fluid
-                        label="Owner"
-                        onChange={handleChange(setOwner)}
-                        value={owner}
+                        label="Team"
+                        onChange={handleChange(setteam)}
+                        value={team}
                     />
                     <Form.Input
                         fluid
-                        label="Vertical"
-                        onChange={handleChange(setVertical)}
-                        value={vertical}
+                        label="Department"
+                        onChange={handleChange(setdepartment)}
+                        value={department}
                     />
                 </Form>
             </Modal.Content>

@@ -11,7 +11,7 @@ export interface Props {
 }
 
 const serviceMatchesFilter = (filter: string, service: ServiceDTO): boolean => {
-    return service.name.startsWith(filter) || service.owner.startsWith(filter) || service.vertical.startsWith(filter);
+    return service.name.startsWith(filter) || service.team.startsWith(filter) || service.department.startsWith(filter);
 }
 
 const ServicesApp: React.FC<Props> = (props) => {
@@ -54,8 +54,8 @@ const ServicesApp: React.FC<Props> = (props) => {
                         {service.name}
                     </Header>
                 </Table.Cell>
-                <Table.Cell singleLine>{service.owner}</Table.Cell>
-                <Table.Cell singleLine>{service.vertical}</Table.Cell>
+                <Table.Cell singleLine>{service.team}</Table.Cell>
+                <Table.Cell singleLine>{service.department}</Table.Cell>
                 <Table.Cell >
                     <EditServiceModalButton service={service} handleUpdateService={handleUpdatedService} />
                     <Button color="red" onClick={() => handleDelete(service)}>Delete</Button>
@@ -81,9 +81,9 @@ const ServicesApp: React.FC<Props> = (props) => {
             <Table celled padded>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell singleLine>ServiceDTO Name</Table.HeaderCell>
-                        <Table.HeaderCell>Owner</Table.HeaderCell>
-                        <Table.HeaderCell>Vertical</Table.HeaderCell>
+                        <Table.HeaderCell singleLine>Name</Table.HeaderCell>
+                        <Table.HeaderCell>Team</Table.HeaderCell>
+                        <Table.HeaderCell>Department</Table.HeaderCell>
                         <Table.HeaderCell>Options</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>

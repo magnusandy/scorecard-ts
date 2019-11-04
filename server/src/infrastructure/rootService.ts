@@ -34,8 +34,8 @@ export class RootService {
             const unvalidatedBody: CreateService = req.body;
             const validatedBody: CreateService = {
                 name: validateString("name", unvalidatedBody.name),
-                owner: validateString("owner", unvalidatedBody.owner),
-                vertical: validateString("vertical", unvalidatedBody.vertical),
+                team: validateString("team", unvalidatedBody.team),
+                department: validateString("department", unvalidatedBody.department),
             }
             console.log(validatedBody);
             return this.api.saveNewService(validatedBody);
@@ -45,8 +45,8 @@ export class RootService {
             const serviceId: string = req.params.serviceId;
             const unvalidatedBody: ServiceUpdateDTO = req.body;
             const validatedBody: ServiceUpdateDTO = {
-                owner: validateString("owner", unvalidatedBody.owner),
-                vertical: validateString("vertical", unvalidatedBody.vertical),
+                team: validateString("team", unvalidatedBody.team),
+                department: validateString("department", unvalidatedBody.department),
             }
             return this.api.updateService(serviceId, validatedBody);
         });

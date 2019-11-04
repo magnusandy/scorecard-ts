@@ -18,7 +18,7 @@ export class ServiceService {
     public async updateService(serviceUpdate: ServiceUpdate): Promise<Service> {
         const existingService: Service = (await this.findServiceById(serviceUpdate.id))
             .orElseThrow(() => new NotFoundException(`service with id: ${serviceUpdate.id} not found during update;`));
-        const updatedService = new Service(serviceUpdate.id, existingService.name, serviceUpdate.owner, serviceUpdate.vertical);
+        const updatedService = new Service(serviceUpdate.id, existingService.name, serviceUpdate.team, serviceUpdate.department);
         return this.saveService(updatedService);
     }
 

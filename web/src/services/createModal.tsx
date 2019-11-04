@@ -1,7 +1,6 @@
 import React, { useState, ChangeEvent } from 'react'
 import { Button, Header, Modal, Input, Grid, GridColumn, Form } from 'semantic-ui-react'
 import { createNewService } from '../api';
-import styled from 'styled-components';
 import { ServiceDTO } from '../shared/dtos';
 
 interface Props {
@@ -11,8 +10,8 @@ interface Props {
 const CreateServiceModalButton: React.FC<Props> = (props) => {
     const [open, setOpen] = useState<boolean>(false);
     const [name, setName] = useState<string>();
-    const [owner, setOwner] = useState<string>();
-    const [vertical, setVertical] = useState<string>();
+    const [team, setteam] = useState<string>();
+    const [department, setDepartment] = useState<string>();
 
     const handleChange = (setFunction: React.Dispatch<React.SetStateAction<string | undefined>>) => {
         return (event: ChangeEvent<HTMLInputElement>) => setFunction(event.target.value)
@@ -23,8 +22,8 @@ const CreateServiceModalButton: React.FC<Props> = (props) => {
     }
 
     const handleSubmit = () => {
-        if (isValid(name) && isValid(vertical) && isValid(owner)) {
-            createNewService({ name, owner, vertical })
+        if (isValid(name) && isValid(department) && isValid(team)) {
+            createNewService({ name, team, department })
                 .then(service => {
                     props.handleNewService(service);
                     setOpen(false);
@@ -47,13 +46,13 @@ const CreateServiceModalButton: React.FC<Props> = (props) => {
                     />
                     <Form.Input
                         fluid
-                        label="Owner"
-                        onChange={handleChange(setOwner)}
+                        label="team"
+                        onChange={handleChange(setteam)}
                     />
                     <Form.Input
                         fluid
-                        label="Vertical"
-                        onChange={handleChange(setVertical)}
+                        label="department"
+                        onChange={handleChange(setDepartment)}
                     />
                 </Form>
             </Modal.Content>

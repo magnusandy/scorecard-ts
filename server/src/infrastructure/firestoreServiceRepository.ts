@@ -7,8 +7,8 @@ import { UnknownException } from "../domain/exceptions";
 interface SerializedService {
     id: string;
     name: string;
-    owner: string;
-    vertical: string;
+    team: string;
+    department: string;
 }
 
 export class FirestoreServiceRepository implements ServiceRepository {
@@ -66,7 +66,7 @@ export class FirestoreServiceRepository implements ServiceRepository {
         if (doc.exists) {
             const data: DocumentData = doc.data();
             const serviceData: SerializedService = data as SerializedService;
-            const service = new Service(serviceData.id, serviceData.name, serviceData.owner, serviceData.vertical);
+            const service = new Service(serviceData.id, serviceData.name, serviceData.team, serviceData.department);
             return Optional.of(service);
         } else {
             return Optional.empty();

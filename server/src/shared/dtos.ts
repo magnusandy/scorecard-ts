@@ -1,19 +1,19 @@
 export interface CreateService {
     name: string;
-    owner: string;
-    vertical: string;
+    team: string;
+    department: string;
 }
 
 export interface ServiceDTO {
     id: string;
     name: string;
-    owner: string;
-    vertical: string;
+    team: string;
+    department: string;
 }
 
 export interface ServiceUpdateDTO {
-    owner: string;
-    vertical: string;
+    team: string;
+    department: string;
 }
 
 export interface ServiceList {

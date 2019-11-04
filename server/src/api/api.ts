@@ -21,8 +21,8 @@ export class Api {
         return await this.serviceService.saveService(new Service(
             uuid.v4(),
             createService.name,
-            createService.owner,
-            createService.vertical
+            createService.team,
+            createService.department
         )).then(r => (this.serviceToDto(r)));
     }
 
@@ -69,8 +69,8 @@ export class Api {
         return {
             id: service.id,
             name: service.name,
-            owner: service.owner,
-            vertical: service.vertical
+            team: service.team,
+            department: service.department
         };
     }
 }
