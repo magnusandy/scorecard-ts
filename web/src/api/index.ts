@@ -1,4 +1,4 @@
-import {ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError} from "../shared/api";
+import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError } from "../shared/api";
 import { ExceptionType } from "../shared/domain";
 
 interface ServiceUpdateWithId extends ServiceUpdateDTO {
@@ -53,10 +53,15 @@ export async function updateService(update: ServiceUpdateWithId): Promise<Servic
         body: JSON.stringify(update)
     });
     const json = await response.json();
-    if (response.status !== 200) {
-        throw "Something went wrong";
+    if (response.status === 400) {
+        throw (json as ServerError);
+    } else if (response.status !== 200) {
+        const error: ServerError = {
+            type: "Unknown",
+            message: "Unknown Error",
+        }
+        throw error;
     }
-    console.log(json);
     return json as ServiceDTO;
 }
 

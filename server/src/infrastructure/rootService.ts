@@ -46,6 +46,7 @@ export class RootService {
             const serviceId: string = req.params.serviceId;
             const unvalidatedBody: ServiceUpdateDTO = req.body;
             const validatedBody: ServiceUpdateDTO = {
+                name: validateString("name", unvalidatedBody.name),
                 team: validateString("team", unvalidatedBody.team),
                 department: validateString("department", unvalidatedBody.department),
             }

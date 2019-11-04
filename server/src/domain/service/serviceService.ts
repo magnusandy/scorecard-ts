@@ -12,7 +12,7 @@ export class ServiceService {
         this.serviceRepository = serviceRepository;
     }
 
-    public async saveService(service: Service): Promise<Service> {
+    public async createService(service: Service): Promise<Service> {
         const withName: Service[] = await this.serviceRepository.findServices({ name: service.name });
         if (withName.length > 0) {
             throw new IllegalArgumentException(`Cannot create a new service, one with the name ${service.name} already exists.`)
@@ -22,10 +22,19 @@ export class ServiceService {
     }
 
     public async updateService(serviceUpdate: ServiceUpdate): Promise<Service> {
+
         const existingService: Service = (await this.findServiceById(serviceUpdate.id))
             .orElseThrow(() => new NotFoundException(`service with id: ${serviceUpdate.id} not found during update;`));
-        const updatedService = new Service(serviceUpdate.id, existingService.name, serviceUpdate.team, serviceUpdate.department);
-        return this.saveService(updatedService);
+        if (serviceUpdate.name !== existingService.name) {
+            //name changed, need to check if there is collisions
+            const withName: Service[] = await this.serviceRepository.findServices({ name: serviceUpdate.name });
+            if (withName.length > 0) {
+                throw new IllegalArgumentException(`Cannot update service ${serviceUpdate.id}, one with the name ${serviceUpdate.name} already exists.`)
+
+            }
+        }
+        const updatedService = new Service(existingService.id, serviceUpdate.name, serviceUpdate.team, serviceUpdate.department);
+        return this.serviceRepository.saveService(updatedService);
     }
 
     public deleteService(serviceId: string): Promise<boolean> {

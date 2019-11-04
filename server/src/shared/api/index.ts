@@ -14,6 +14,7 @@ export interface ServiceDTO {
 }
 
 export interface ServiceUpdateDTO {
+    name: string;
     team: string;
     department: string;
 }

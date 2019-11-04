@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from 'react'
-import { Button, Modal, Form } from 'semantic-ui-react'
+import { Button, Modal, Form, Message } from 'semantic-ui-react'
 import { updateService } from '../api';
-import { ServiceDTO } from '../shared/api';
+import { ServiceDTO, ServerError } from '../shared/api';
 
 interface Props {
     handleUpdateService: (service: ServiceDTO) => void;
@@ -10,8 +10,10 @@ interface Props {
 
 const EditServiceModalButton: React.FC<Props> = (props) => {
     const [open, setOpen] = useState<boolean>(false);
-    const [team, setteam] = useState<string>(props.service.team);
-    const [department, setdepartment] = useState<string>(props.service.department);
+    const [name, setName] = useState<string>(props.service.name);
+    const [team, setTeam] = useState<string>(props.service.team);
+    const [error, setError] = useState<string>();
+    const [department, setDepartment] = useState<string>(props.service.department);
 
     const handleChange = (setFunction: React.Dispatch<React.SetStateAction<string>>) => {
         return (event: ChangeEvent<HTMLInputElement>) => setFunction(event.target.value)
@@ -21,15 +23,20 @@ const EditServiceModalButton: React.FC<Props> = (props) => {
         return str !== undefined && str !== "";
     }
 
+    const closeModal = () => {
+        setError(undefined);
+        setOpen(false);
+    }
+
     const handleSubmit = () => {
-        if (isValid(department) && isValid(team)) {
+        if (isValid(name) && isValid(department) && isValid(team)) {
             const id = props.service.id;
-            updateService({ id, team, department })
+            updateService({ name, id, team, department })
                 .then(service => {
                     props.handleUpdateService(service);
-                    setOpen(false);
+                    closeModal();
                 })
-                .catch(err => console.log(err))
+                .catch((err: ServerError) => setError(err.message))
         }
     }
 
@@ -39,30 +46,34 @@ const EditServiceModalButton: React.FC<Props> = (props) => {
             trigger={<Button onClick={() => setOpen(true)} color="orange">Edit</Button>}>
             <Modal.Header>Edit Service</Modal.Header>
             <Modal.Content>
+                {error && <Message error>
+                    <Message.Header>Problem creating new Service</Message.Header>
+                    <p>{error}</p>
+                </Message>}
                 <Form>
                     <Form.Input
                         fluid
-                        disabled
                         label="Name"
-                        value={props.service.name}
+                        onChange={handleChange(setName)}
+                        value={name}
                     />
                     <Form.Input
                         fluid
                         label="Team"
-                        onChange={handleChange(setteam)}
+                        onChange={handleChange(setTeam)}
                         value={team}
                     />
                     <Form.Input
                         fluid
                         label="Department"
-                        onChange={handleChange(setdepartment)}
+                        onChange={handleChange(setDepartment)}
                         value={department}
                     />
                 </Form>
             </Modal.Content>
             <Modal.Actions>
                 <Button color="green" onClick={handleSubmit}>Update</Button>
-                <Button color="red" onClick={() => setOpen(false)}>Close</Button>
+                <Button color="red" onClick={() => closeModal()}>Close</Button>
             </Modal.Actions>
         </Modal>
     )

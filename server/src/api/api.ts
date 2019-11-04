@@ -18,7 +18,7 @@ export class Api {
     }
 
     public async saveNewService(createService: CreateService): Promise<ServiceDTO> {
-        return await this.serviceService.saveService(new Service(
+        return await this.serviceService.createService(new Service(
             uuid.v4(),
             createService.name,
             createService.team,
