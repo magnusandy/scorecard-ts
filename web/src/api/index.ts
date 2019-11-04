@@ -1,4 +1,4 @@
-import {ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO} from "../shared/dtos";
+import {ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO} from "../shared/api";
 
 interface ServiceUpdateWithId extends ServiceUpdateDTO {
     id: string;

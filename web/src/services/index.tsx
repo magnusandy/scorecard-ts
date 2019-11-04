@@ -4,7 +4,7 @@ import { getAllServices, deleteService } from "../api";
 import { Optional } from "java8script";
 import EditServiceModalButton from "./editModal";
 import CreateServiceModalButton from "./createModal";
-import { ServiceDTO } from "../shared/dtos";
+import { ServiceDTO } from "../shared/api";
 
 export interface Props {
     searchFilter: Optional<string>;

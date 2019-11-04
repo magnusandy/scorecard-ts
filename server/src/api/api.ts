@@ -1,4 +1,4 @@
-import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO } from "../shared/dtos";
+import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO } from "../shared/api";
 import { ServiceService } from "../domain/service/serviceService";
 import { Service } from "../domain/service/service";
 import uuid = require("uuid");

@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from 'react'
 import { Button, Header, Modal, Input, Grid, GridColumn, Form } from 'semantic-ui-react'
 import { createNewService } from '../api';
-import { ServiceDTO } from '../shared/dtos';
+import { ServiceDTO } from '../shared/api';
 
 interface Props {
     handleNewService: (service: ServiceDTO) => void;

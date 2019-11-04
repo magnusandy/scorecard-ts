@@ -1,9 +1,4 @@
-export enum ExceptionType {
-    NotFound = "NotFound",
-    Unknown = "Unknown",
-    BadState = "BadState",
-    Validation= "Validation"
-}
+import { ExceptionType } from "../shared/domain";
 
 export interface Exception extends Error {
     type: ExceptionType;

@@ -1,8 +1,9 @@
 import { Application, Response, Request } from "express";
 import { Api } from "../api/api";
-import { Exception, ExceptionType, UnknownException, ValidationException } from "../domain/exceptions";
-import { CreateService, ServiceUpdateDTO } from "../shared/dtos";
+import { Exception, UnknownException, ValidationException } from "../domain/exceptions";
+import { CreateService, ServiceUpdateDTO, ServerError } from "../shared/api";
 import cors from "cors";
+import { ExceptionType } from "../shared/domain";
 
 type RequestFunction = (req: Request, res: Response) => void;
 type RequestFunctionPromise<T> = (req: Request, res: Response) => Promise<T>;
@@ -84,29 +85,6 @@ function validateString(name: string, val: string): string {
     }
 }
 
-function errorMiddleware(reqFunction: RequestFunction): RequestFunction {
-    return (req, res) => {
-        try {
-            reqFunction(req, res);
-        } catch (error) {
-            console.log(`HANDLING ERROR:`);
-            console.log(error);
-            const exception: Exception = error;
-            if (exception.type && exception.message) {
-                if (exception.type === ExceptionType.NotFound) {
-                    res.status(404);
-                } else {
-                    res.status(500);
-                }
-                res.send(exception);
-            } else {
-                res.status(500);
-                res.send(new UnknownException(JSON.stringify(error)))
-            }
-        }
-    }
-}
-
 function promiseErrorMiddleware<T>(reqFunction: RequestFunctionPromise<T>): RequestFunction {
     return async (req, res) => {
         try {
@@ -122,11 +100,21 @@ function promiseErrorMiddleware<T>(reqFunction: RequestFunctionPromise<T>): Requ
                 } else {
                     res.status(500);
                 }
-                res.send(exception);
+                const exceptionDTO: ServerError = exceptionToDTO(exception);
+                res.send(JSON.stringify(exceptionDTO));
             } else {
                 res.status(500);
-                res.send(new UnknownException(JSON.stringify(error)))
+                const dto = exceptionToDTO(new UnknownException(JSON.stringify(error)))
+                res.send(JSON.stringify(dto));
             }
         }
     }
+}
+
+function exceptionToDTO(exception: Exception): ServerError {
+    const exceptionDTO: ServerError = {
+        type: exception.type,
+        message: exception.message,
+    };
+    return exceptionDTO;
 }
