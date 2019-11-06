@@ -22,10 +22,14 @@
     "uuid": "^3.3.3"
   },
   "scripts": {
+    "config:dev": "rm -f ./src/shared/config/config.ts && cp ./src/shared/config/dev.ts ./src/shared/config/config.ts",
+    "config:local": "rm -f ./src/shared/config/config.ts && cp ./src/shared/config/local.ts ./src/shared/config/config.ts",
+    "stubReset": "touch ./build/infrastructure/service/stubDB.json && echo \"[]\" > ./build/infrastructure/service/stubDB.json && touch ./build/infrastructure/question/stubDB.json && echo \"[]\" > ./build/infrastructure/question/stubDB.json",
     "build": "tsc",
     "gcp-build": "tsc",
-    "startDB": "docker run -p 8000:8000 amazon/dynamodb-local",
     "start": "node build/index.js",
-    "fullStart": "tsc && npm run-script start"
+    "buildStart": "tsc && npm run-script start",
+    "cleanLocal": "npm run-script config:local && npm run-script build && npm run-script stubReset && npm run-script start",
+    "cleanDev": "npm run-script config:dev && npm run-script build && npm run-script start"
   }
 }

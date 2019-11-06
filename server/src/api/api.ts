@@ -56,14 +56,15 @@ export class Api {
         };
     }
 
-    public async createQuestion(createQuestion: CreateQuestion, now: Date) {
+    public async createQuestion(createQuestion: CreateQuestion, now: Date):Promise<QuestionDTO> {
         const question: Question = new Question(
             uuid.v4(),
             [
                 new Revision(1, now, createQuestion.text, createQuestion.scores, Optional.ofNullable(createQuestion.desc))
             ]
         );
-        return this.questionService.saveQuestion(question);
+        return this.questionService.saveQuestion(question)
+        .then(q => this.questionToDto(q));
     }
 
     public reviseQuestion(questionId: string, reviseQuestion: ReviseQuestion, now: Date): Promise<QuestionDTO> {

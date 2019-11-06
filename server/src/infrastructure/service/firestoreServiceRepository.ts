@@ -1,9 +1,9 @@
-import { ServiceRepository } from "../domain/service/serviceRepository";
+import { ServiceRepository } from "../../domain/service/serviceRepository";
 import { Firestore, CollectionReference, DocumentReference, DocumentSnapshot, DocumentData, Query } from "@google-cloud/firestore";
-import { Service } from "../domain/service/service";
+import { Service } from "../../domain/service/service";
 import { Optional } from "java8script";
-import { UnknownException } from "../domain/exceptions";
-import { ServiceQuery } from "../domain/service/serviceQuery";
+import { UnknownException } from "../../domain/exceptions";
+import { ServiceQuery } from "../../domain/service/serviceQuery";
 
 interface SerializedService {
     id: string;
@@ -16,6 +16,19 @@ const name = "name";
 const team = "team";
 const department = "department";
 
+export function serializeService(service: Service): SerializedService {
+    return {
+        [id]: service.id,
+        [name]: service.name,
+        [team]: service.team,
+        [department]: service.department
+    }
+}
+
+export function deserializeService(obj: any) {
+    const serviceData = obj as SerializedService;
+    return new Service(serviceData.id, serviceData.name, serviceData.team, serviceData.department);
+}
 
 export class FirestoreServiceRepository implements ServiceRepository {
     private firestore: Firestore;
@@ -28,7 +41,7 @@ export class FirestoreServiceRepository implements ServiceRepository {
 
     public async saveService(service: Service): Promise<Service> {
         const serviceRef: DocumentReference = this.serviceCollection.doc(service.id);
-        await serviceRef.set(this.serializeService(service))
+        await serviceRef.set(serializeService(service))
         return service;
     }
 
@@ -74,19 +87,10 @@ export class FirestoreServiceRepository implements ServiceRepository {
         return collectionRef;
     }
 
-    private serializeService(service: Service): SerializedService {
-        return {
-            [id]: service.id,
-            [name]: service.name,
-            [team]: service.team,
-            [department]: service.department
-        }
-    }
     private deserializeService(doc: DocumentSnapshot): Optional<Service> {
         if (doc.exists) {
             const data: DocumentData = doc.data();
-            const serviceData: SerializedService = data as SerializedService;
-            const service = new Service(serviceData.id, serviceData.name, serviceData.team, serviceData.department);
+            const service = deserializeService(data);
             return Optional.of(service);
         } else {
             return Optional.empty();
