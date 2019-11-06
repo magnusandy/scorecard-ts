@@ -1,4 +1,4 @@
-import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO, QuestionList, QuestionDTO } from "../shared/api";
+import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO, QuestionList, QuestionDTO, QuestionSummary } from "../shared/api";
 import { ServiceService } from "../domain/service/serviceService";
 import { Service } from "../domain/service/service";
 import uuid = require("uuid");
@@ -6,6 +6,7 @@ import { NotFoundException } from "../domain/exceptions";
 import { Optional } from "java8script";
 import { QuestionService } from "../domain/questions/questionService";
 import { Question, Revision } from "../domain/questions/question";
+import { text } from "body-parser";
 
 export class Api {
 
@@ -52,11 +53,17 @@ export class Api {
     public async findQuestions(): Promise<QuestionList> {
         const questions = await this.questionService.findQuestions();
         return {
-            questions: questions.map(q => this.questionToDto(q))
+            questions: questions.map(q => this.toQuestionSummary(q))
         };
     }
 
-    public async createQuestion(createQuestion: CreateQuestion, now: Date):Promise<QuestionDTO> {
+    public async findQuestionById(questionId: string): Promise<QuestionDTO> {
+        return (await this.questionService.findQuesionById(questionId))
+        .map(q => this.questionToDto(q))
+        .orElseThrow(() => new NotFoundException(`question with id: ${questionId} not found.`));
+    }
+
+    public async createQuestion(createQuestion: CreateQuestion, now: Date): Promise<QuestionDTO> {
         const question: Question = new Question(
             uuid.v4(),
             [
@@ -64,7 +71,7 @@ export class Api {
             ]
         );
         return this.questionService.saveQuestion(question)
-        .then(q => this.questionToDto(q));
+            .then(q => this.questionToDto(q));
     }
 
     public reviseQuestion(questionId: string, reviseQuestion: ReviseQuestion, now: Date): Promise<QuestionDTO> {
@@ -85,6 +92,16 @@ export class Api {
             team: service.team,
             department: service.department
         };
+    }
+
+    private toQuestionSummary(question: Question): QuestionSummary {
+        const latest:Revision = question.latestRevision();
+        return {
+            id: question.questionId,
+            text: latest.questionText,
+            desc: latest.questionDescription.orElse(undefined),
+            scores: latest.getScoreChoices()
+        }
     }
 
     private questionToDto(question: Question): QuestionDTO {

@@ -63,6 +63,10 @@ export class RootService {
             this.api.findQuestions()
         );
 
+        this.getAsync("/question/:questionId", (req, res) =>
+            this.api.findQuestionById(req.params.questionId)
+        );
+
         this.postAsync("/question", (req, res) => {
             const unvalidatedBody = req.body;
             console.log(unvalidatedBody);

@@ -14,6 +14,14 @@ export class QuestionService {
         return this.questionRepository.saveQuestion(question);
     }
 
+    findQuesionById(questionId: string): Promise<Optional<Question>> {
+        return this.questionRepository.findQuestionById(questionId)
+        .then(s => {
+            console.log(s);
+            return s;
+        });
+    }
+
     public async updateQuestion(updateQuestion: UpdateQuestion, requestTime: Date): Promise<Question> {
         const existingQuestion: Question = (await this.questionRepository.findQuestionById(updateQuestion.questionId))
             .orElseThrow(() => new NotFoundException(`cannot update question ${updateQuestion.questionId}, does not exist.`));

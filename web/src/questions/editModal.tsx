@@ -1,12 +1,13 @@
 import React, { useState, ChangeEvent } from 'react'
 import { Button, Modal, Form, Message, Table, Header, Label } from 'semantic-ui-react'
 import { Question } from './question';
-import { RevisionDTO } from '../shared/api';
+import { RevisionDTO, QuestionSummary } from '../shared/api';
 import { formatDistance } from 'date-fns';
+import { getRevisionsForQuestion } from '../api';
 
 interface Props {
-    handleUpdateQuestion: (service: Question) => void;
-    question: Question;
+    handleUpdateQuestion: (service: QuestionSummary) => void;
+    questionId: string;
 }
 
 function renderRow(revision: RevisionDTO) {
@@ -27,16 +28,26 @@ function renderRow(revision: RevisionDTO) {
 const EditQuestionModalButton: React.FC<Props> = (props) => {
     const [open, setOpen] = useState<boolean>(false);
     const [error, setError] = useState<string>();
+    const [revisions, setRevisions] = useState<RevisionDTO[]>([]);
 
     const closeModal = () => {
         setError(undefined);
         setOpen(false);
     }
 
+    const openModal = () => {
+        setRevisions([]);
+        setOpen(true);
+        getRevisionsForQuestion(props.questionId)
+        .then(revisions => setRevisions(revisions))
+        .catch(e => setError("bad"))
+
+    }
+
     return (
         <Modal
             open={open}
-            trigger={<Button onClick={() => setOpen(true)} color="orange">Edit</Button>}>
+            trigger={<Button onClick={() => openModal()} color="orange">Edit</Button>}>
             <Modal.Header>Edit Question</Modal.Header>
             <Modal.Content>
                 {error && <Message error>
@@ -55,7 +66,7 @@ const EditQuestionModalButton: React.FC<Props> = (props) => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {props.question.getOrderedRevisions().map(q => renderRow(q))}
+                        {revisions.map(q => renderRow(q))}
                     </Table.Body>
                 </Table>
                 <Header>Add Question Revision</Header>

@@ -34,6 +34,13 @@ export interface QuestionDTO {
     revisions: RevisionDTO[];
 }
 
+export interface QuestionSummary {
+    id: string;
+    text: string;
+    desc?: string;
+    scores: number[];
+}
+
 export interface RevisionDTO {
     revisionNumber: number;
     revisionTime: number; //timestamp
@@ -43,7 +50,7 @@ export interface RevisionDTO {
 }
 
 export interface QuestionList {
-    questions: QuestionDTO[];
+    questions: QuestionSummary[];
 }
 
 export interface ReviseQuestion {

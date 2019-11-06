@@ -1,4 +1,4 @@
-import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError, QuestionList, QuestionDTO } from "../shared/api";
+import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError, QuestionList, QuestionDTO, QuestionSummary, RevisionDTO } from "../shared/api";
 import { ExceptionType } from "../shared/domain";
 import { Question } from "../questions/question";
 
@@ -78,7 +78,7 @@ export async function deleteService(serviceId: string): Promise<boolean> {
     }
 }
 
-export async function getAllQuestions(): Promise<Question[]> {
+export async function getAllQuestions(): Promise<QuestionSummary[]> {
     try {
         const response = await fetch("http://localhost:8080/question", {
             method: "GET",
@@ -86,9 +86,24 @@ export async function getAllQuestions(): Promise<Question[]> {
         });
         const json = await response.json();
         return (json as QuestionList).questions
-            .map(q => Question.fromDTO(q));
     } catch (error) {
         console.log("error fetching question")
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function getRevisionsForQuestion(questionId: string): Promise<RevisionDTO[]> {
+    try {
+        const response = await fetch(`http://localhost:8080/question/${questionId}`, {
+            method: "GET",
+            mode: "cors"
+        });
+        const json = await response.json();
+        console.log(json);
+        return (json as QuestionDTO).revisions;
+    } catch (error) {
+        console.log("error fetching questions")
         console.log(error);
         throw error;
     }
