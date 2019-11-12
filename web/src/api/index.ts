@@ -1,4 +1,4 @@
-import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError, QuestionList, QuestionDTO, QuestionSummary, RevisionDTO } from "../shared/api";
+import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError, QuestionList, QuestionDTO, QuestionSummary, RevisionDTO, ReviseQuestion } from "../shared/api";
 import { ExceptionType } from "../shared/domain";
 import { Question } from "../questions/question";
 
@@ -107,4 +107,26 @@ export async function getRevisionsForQuestion(questionId: string): Promise<Revis
         console.log(error);
         throw error;
     }
+}
+
+export async function addNewRevision(questionId: string, revision:ReviseQuestion):Promise<QuestionDTO> {
+    const response = await fetch(`http://localhost:8080/question/${questionId}`, {
+        method: "PUT",
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(revision)
+    });
+    const json = await response.json();
+    if (response.status === 400) {
+        throw (json as ServerError);
+    } else if (response.status !== 200) {
+        const error: ServerError = {
+            type: "Unknown",
+            message: "Unknown Error",
+        }
+        throw error;
+    }
+    return json as QuestionDTO;
 }

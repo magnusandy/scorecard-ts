@@ -23,6 +23,30 @@ const QuestionsApp: React.FC<Props> = (props) => {
             .catch(e => setError("Problem Fetching Question List"));
     }, []);
 
+    const updateEditedQuestion = (s: QuestionSummary):void => {
+        const filterOutOld = questions.filter(q => q.id !== s.id);
+        setQuestions([s, ...filterOutOld]);
+    }
+
+    const renderRow = (question: QuestionSummary) => {
+        return <Table.Row>
+            <Table.Cell>
+                <Header>{question.text}</Header>
+                {question.desc && <p>{question.desc}</p>}
+            </Table.Cell>
+            <Table.Cell collapsing>
+                {question.scores.map(s => <Label>{s}</Label>)}
+            </Table.Cell>
+            <Table.Cell collapsing>
+                <EditQuestionModalButton
+                    handleUpdateQuestion={updateEditedQuestion}
+                    questionId={question.id}
+                />
+                <Button color="red" onClick={() => { }}>Delete</Button>
+            </Table.Cell>
+        </Table.Row>;
+    }
+
     const filteredQuestions = questions.filter(q => props.searchFilter.map(filter => questionMatchFilter(q, filter)).orElse(true));
     return (
         <>
@@ -47,25 +71,6 @@ const QuestionsApp: React.FC<Props> = (props) => {
             </Table>
         </>
     );
-}
-
-const renderRow = (question: QuestionSummary) => {
-    return <Table.Row>
-        <Table.Cell>
-            <Header>{question.text}</Header>
-            {question.desc && <p>{question.desc}</p>}
-        </Table.Cell>
-        <Table.Cell collapsing>
-            {question.scores.map(s => <Label>{s}</Label>)}
-        </Table.Cell>
-        <Table.Cell collapsing>
-            <EditQuestionModalButton
-                handleUpdateQuestion={() => { }}
-                questionId={question.id}
-            />
-            <Button color="red" onClick={() => { }}>Delete</Button>
-        </Table.Cell>
-    </Table.Row>;
 }
 
 export default QuestionsApp;
