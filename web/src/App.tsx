@@ -3,8 +3,9 @@ import { Link, BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ServicesApp from './services';
 import QuestionsApp from './questions';
 import styled from 'styled-components';
-import MainBar, { MenuNames } from './root/mainBar';
+import MainBar from './root/mainBar';
 import { Optional } from "java8script";
+import HomeApp from "./home"
 
 const PaddedDiv = styled.div`
   margin: 16px;
@@ -36,6 +37,12 @@ const App: React.FC = () => {
         <Route path="/questions">
           <PaddedDiv>
             <QuestionsApp searchFilter={search} />
+          </PaddedDiv>
+        </Route>
+        <Route path="/">
+          <PaddedDiv>
+            <HomeApp
+              searchFilter={search} />
           </PaddedDiv>
         </Route>
       </Switch>

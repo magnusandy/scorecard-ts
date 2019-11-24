@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 export enum MenuNames {
     Services = "services",
     Questions = "questions",
+    Home = "home",
 }
 
 export interface Props {
@@ -12,9 +13,18 @@ export interface Props {
 }
 
 const MainBar: React.FC<Props> = (props: Props) => {
-    const [activeName, setActiveName] = useState<MenuNames | undefined>(undefined);
+    const [activeName, setActiveName] = useState<MenuNames>(MenuNames.Home);
     return (
         <Menu>
+            <Link to="/">
+                <Menu.Item
+                    name={MenuNames.Home}
+                    active={activeName === MenuNames.Home}
+                    content={"Home"}
+                    onClick={() => setActiveName(MenuNames.Home)}
+
+                />
+            </Link>
             <Link to="/services">
                 <Menu.Item
                     name={MenuNames.Services}

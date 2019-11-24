@@ -130,3 +130,7 @@ export async function addNewRevision(questionId: string, revision:ReviseQuestion
     }
     return json as QuestionDTO;
 }
+
+export async function getTeamList(): Promise<string[]> {
+    return ["team1", "team2"];
+}
