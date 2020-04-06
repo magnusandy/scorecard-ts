@@ -13,8 +13,11 @@ const FloatLeftH2 = styled.h2`
 float: left;
 margin-right: 10px;
 `;
+
 const TeamServiceList: React.FC<Props> = (props) => {
     const [error, setError] = useState<string>();
+    const []
+
     return (
         <>
             <div>
