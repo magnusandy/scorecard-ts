@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Optional } from "java8script";
 import cookie from "react-cookies";
-import { Input, Dropdown, Loader, Button } from "semantic-ui-react";
+import { Dropdown, Loader, Button } from "semantic-ui-react";
 import styled from "styled-components";
 import { getTeamList } from "../api";
+import TeamServiceList from "./teamServiceList";
 
 const COOKIE_NAME = "teamDetails";
 
@@ -19,6 +20,11 @@ const getTeamCookie = (): Optional<string> => {
     return Optional.ofNullable(cookie.load(COOKIE_NAME) as TeamDetailsCookie)
         .map(cookie => cookie.teamName);
 }
+
+const clearTeamCookie = (): void => {
+    cookie.remove(COOKIE_NAME);
+}
+
 
 const CenteredContextDiv = styled.div`
 text-align: center;
@@ -47,10 +53,12 @@ const HomeApp: React.FC<Props> = (props) => {
                     setError("Something happened when fetching team list");
                 })
         } else {
-            setCurrentTeam(teamCookie);
+            if(!currentTeam.isPresent()) {
+                setCurrentTeam(teamCookie);
+            }
             setLoading(false);
         }
-    }, []);
+    }, [currentTeam]);
 
     const onConfirm = () => {
         if(teamSearch) {
@@ -60,6 +68,11 @@ const HomeApp: React.FC<Props> = (props) => {
             cookie.save(COOKIE_NAME, cookieVal, {path:"/"})
             setCurrentTeam(Optional.of(teamSearch));
         }
+    }
+
+    const clearTeam = () => {
+        clearTeamCookie();
+        setCurrentTeam(Optional.empty());
     }
 
     return (
@@ -81,6 +94,15 @@ const HomeApp: React.FC<Props> = (props) => {
                         </PaddedDiv>
                     </CenteredContextDiv>
                 </>
+            }
+            {!loading && currentTeam.isPresent() && 
+            <>
+                <TeamServiceList
+                searchFilter={props.searchFilter}
+                teamName={currentTeam.get()}
+                clearTeam={clearTeam}
+                />
+            </>
             }
         </>
     );

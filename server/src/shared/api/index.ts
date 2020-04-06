@@ -13,6 +13,14 @@ export interface ServiceDTO {
     department: string;
 }
 
+export interface TeamsDTO {
+    list: TeamDTO[];
+}
+
+export interface TeamDTO {
+    name: string;
+}
+
 export interface ServiceUpdateDTO {
     name: string;
     team: string;

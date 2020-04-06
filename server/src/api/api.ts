@@ -1,4 +1,4 @@
-import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO, QuestionList, QuestionDTO, QuestionSummary } from "../shared/api";
+import { CreateService, ServiceList, ServiceDTO, CreateQuestion, ReviseQuestion, ServiceUpdateDTO, QuestionList, QuestionDTO, QuestionSummary, TeamDTO, TeamsDTO } from "../shared/api";
 import { ServiceService } from "../domain/service/serviceService";
 import { Service } from "../domain/service/service";
 import uuid = require("uuid");
@@ -83,6 +83,18 @@ export class Api {
             scores: reviseQuestion.scores
         }, now)
             .then(this.questionToDto);
+    }
+
+
+
+    public getTeams(): Promise<TeamsDTO> {
+        return this.serviceService.findServices({})
+            .then(services =>  {
+                let uniqueSet: Set<string> = new Set(services.map(s => s.team));
+                let array: TeamDTO[] = [];
+                uniqueSet.forEach(t => array.push({name: t}))
+                return {list: array};
+            });
     }
 
     private serviceToDto(service: Service): ServiceDTO {

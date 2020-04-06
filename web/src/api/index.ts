@@ -1,4 +1,4 @@
-import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError, QuestionList, QuestionDTO, QuestionSummary, RevisionDTO, ReviseQuestion } from "../shared/api";
+import { ServiceDTO, ServiceList, CreateService, ServiceUpdateDTO, ServerError, QuestionList, QuestionDTO, QuestionSummary, RevisionDTO, ReviseQuestion, TeamsDTO } from "../shared/api";
 import { ExceptionType } from "../shared/domain";
 import { Question } from "../questions/question";
 
@@ -131,6 +131,21 @@ export async function addNewRevision(questionId: string, revision:ReviseQuestion
     return json as QuestionDTO;
 }
 
+//todo getTeamList
 export async function getTeamList(): Promise<string[]> {
-    return ["team1", "team2"];
+    try {
+        const response = await fetch(`http://localhost:8080/teams`, {
+            method: "GET",
+            mode: "cors"
+        });
+        const json = await response.json();
+        console.log(json);
+        return (json as TeamsDTO)
+        .list
+        .map(teamDto => teamDto.name);
+    } catch (error) {
+        console.log("error fetching teams")
+        console.log(error);
+        throw error;
+    }
 }

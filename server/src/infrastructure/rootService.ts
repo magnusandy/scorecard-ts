@@ -91,6 +91,10 @@ export class RootService {
             return this.api.reviseQuestion(questionId, reviseQuestion, new Date())
         })
 
+        this.getAsync("/teams", (req, res) => {
+            return this.api.getTeams();
+        })
+
         this.expressServer.listen(8080, () => console.log(`listening on port 8080`));
     }
 
